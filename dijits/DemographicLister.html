@@ -1,0 +1,21 @@
+<div class="multiLister" id="${id}">
+	<h2>${title}</h2>
+	<div class="itemPicker box300">
+		<div class="itemList">
+			<ul data-dojo-attach-point="storeContentsNode"></ul>
+		</div>
+		<div class="itemControls">
+			<button data-dojo-attach-point="_createButton"
+					  data-dojo-type="dijit.form.Button"
+					  type="button">${buttonCreateLabel}</button>
+		</div>
+		<div class="itemPickerCap">&nbsp;</div>
+	</div>
+	<div data-dojo-attach-point="itemDetailWidget" data-dojo-type="czarTheory.dijits.views.DemographicDetail"></div>
+	<div data-dojo-attach-point="_formDialog"
+		  data-dojo-type="dijit.Dialog"
+		  data-dojo-props="draggable:${draggable}"
+		  class="dijitHidden">
+		<span data-dojo-attach-point="containerNode"></span>
+	</div>
+</div>

@@ -23,6 +23,8 @@ dojo.declare("czarTheory.dijits.MultiLister",[dijit._Widget,dijit._Templated],{
 	canCreate: true,
 	canUpdate: true,
 	canDelete: true,
+	checkEachUpdate: false,
+	checkEachDelete: false,
 	draggable: false,
 	objectStore: null,
 	itemConstructor: null,
@@ -106,12 +108,19 @@ dojo.declare("czarTheory.dijits.MultiLister",[dijit._Widget,dijit._Templated],{
 	
 		dojo.connect(this._form,'onSubmit', this, this._onSubmit);
 		dojo.connect(this._formDialog, 'onHide', this, this._cancelForm);
-		dojo.connect(this._createButton, "onClick", this, this._prepFormForCreation);
+		if(this.canCreate){
+			dojo.connect(this._createButton, "onClick", this, this._prepFormForCreation);
+		} else {
+			dojo.addClass(this._createButton.domNode, "dijitHidden");
+		}
 	
 		var _this = this;
 		dojo.when(this.objectStore.query(),function(results){
 			for(var i=0;i<results.length;i++){
 				var data = results[i];
+				if(!this.checkEachUpdate){data.canUpdate = this.canUpdate;}
+				if(!this.checkEachDelete){data.canDelete = this.canDelete;}
+				
 				var item = _this.itemConstructor({properties:data, animateOnCreate:false, idProperty:_this.idProperty});
 				item.placeAt(_this.storeContentsNode);
 			}
@@ -139,9 +148,23 @@ dojo.declare("czarTheory.dijits.MultiLister",[dijit._Widget,dijit._Templated],{
 				} else if(type == 'updateAnchor'){
 					this._currentItem = widget;
 					this._prepFormForUpdate();
+				} else {
+					this._activateItem(widget);
 				}
+			} else {
+				this._activateItem(widget);
 			}
 		});
+	},
+	
+	_activeItem: null,
+	_activateItem: function(widget){
+		if(null != this._activeItem){
+			if(widget === this._activeItem) return;
+			this._activeItem.deactivate();
+		}
+		this._activeItem = widget;
+		if(widget != null) {widget.activate();}
 	},
 	
 	_onSubmit: function(evt){
@@ -220,30 +243,33 @@ dojo.declare("czarTheory.dijits.MultiLister",[dijit._Widget,dijit._Templated],{
 	},
 	
 	_createNew: function(data){
-		var _this = this;
 		dojo.when(
 			this.objectStore.add(data),
-			function(result){
-				_this._dismissFormDialog();
-				var item = _this.itemConstructor({properties:result, idProperty:_this.idProperty});
-				item.placeAt(_this.storeContentsNode);
-			},
-			dojo.hitch(_this, "_formRequestError")
+			dojo.hitch(this,"_newCreated"),
+			dojo.hitch(this,"_formRequestError")
 		);
 	},
 	
+	_newCreated: function(data){
+		this._dismissFormDialog();
+		var item = this.itemConstructor({properties:data, idProperty:this.idProperty});
+		item.placeAt(this.storeContentsNode);
+		this._activateItem(item);
+	},
+	
 	_updateCurrent: function(data){
-		var _this = this;
 		data[this.idProperty] = this._currentItem.getId();
 		dojo.when(
 			this.objectStore.put(data),
-			function(result){
-				_this._dismissFormDialog();
-				_this._currentItem.set("value",result);
-				_this._currentItem = null;
-			},
-			dojo.hitch(_this, "_formRequestError")
+			dojo.hitch(this,"_currentUpdated"),
+			dojo.hitch(this,"_formRequestError")
 		);
+	},
+	
+	_currentUpdated: function(data){
+		this._dismissFormDialog();
+		this._currentItem.set("value",data);
+		this._currentItem = null;
 	},
 	
 	_deleteCurrent: function(){
@@ -258,16 +284,20 @@ dojo.declare("czarTheory.dijits.MultiLister",[dijit._Widget,dijit._Templated],{
 		}
 		
 		var _this = this;
-		dojo.when(this.objectStore.remove(_this._currentItem.getId()),
-			function(result){
-				if(_this._confirmDeleteDialog != null) {_this._confirmDeleteDialog.hide();}
-				_this._deleteButton.set("disabled",false);
-				_this._deleteButton.set('iconClass',"");
-				_this._currentItem.destroy();
-				_this._currentItem = null;
-			},
-			dojo.hitch(_this, "_deleteRequestError")
+		dojo.when(
+			this.objectStore.remove(_this._currentItem.getId()),
+			dojo.hitch(this,"_currentDeleted"),
+			dojo.hitch(this,"_deleteRequestError")
 		);
+	},
+	
+	_currentDeleted: function(){
+		if(this._confirmDeleteDialog != null) {this._confirmDeleteDialog.hide();}
+		this._deleteButton.set("disabled",false);
+		this._deleteButton.set('iconClass',"");
+		this._currentItem.destroy();
+		this._currentItem = null;
+		this._activateItem(null);
 	},
 
 	_cancelDelete: function(){

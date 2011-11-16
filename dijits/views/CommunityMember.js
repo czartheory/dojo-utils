@@ -15,5 +15,8 @@ dojo.declare("czarTheory.dijits.views.CommunityMember", czarTheory.dijits.views.
 		emailOrId: {node: "labelNode", type:"innerHTML"},
 		communityRole: {node: "cRoleNode", type:"innerHTML"},
 		appraisalRole: {node: "aRoleNode", type:"innerHTML"}
-	}
+	},
+	
+	flashBackgroundColor: "e6e688",
+	normalBackgroundColor: "e6e6e6"
 });
