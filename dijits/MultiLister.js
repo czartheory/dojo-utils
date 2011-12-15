@@ -65,6 +65,7 @@ dojo.declare("czarTheory.dijits.MultiLister",[dijit._Widget,dijit._Templated],{
 			dojo.create('span',{innerHTML:'&nbsp;&nbsp;'}, this._confirmDeleteDialog.containerNode);
 			this._cancelDeleteButton = new dijit.form.Button({
 				label: "Cancel",
+				baseClass: "gray dijitButton",
 				onClick: dojo.hitch(this, function(){this._confirmDeleteDialog.hide();})
 			}).placeAt(this._confirmDeleteDialog.containerNode);
 		}
