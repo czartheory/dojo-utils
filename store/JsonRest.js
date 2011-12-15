@@ -14,6 +14,8 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 		// options:
 		//		This provides any configuration information that will be mixed into the store
 		dojo.mixin(this, options);
+		var last = this.target[this.target.length-1];
+		if(last != '/') this.target += '/';
 	},
 	// target: String
 	//		The target base URL to use for all requests to the server. This string will be
@@ -34,7 +36,7 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 		//	returns: Number
 		return object[this.idProperty];
 	},
-
+	
 	get: function(id, options){
 		//	summary:
 		//		Retrieves an object by its identity. This will trigger a GET request to the server using
@@ -47,13 +49,26 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 		var _target = this.target;
 		
 		headers.Accept = "application/javascript, application/json";
-		return dojo.xhrGet({
+
+		var def = new dojo.Deferred();
+		dojo.xhrGet({
 			url:this.target + id,
-			handleAs: "json",
+			handleAs: "text",
 			headers: headers,
-			load: function(data){dojo.publish(_target,[{method:'GET',item:data}]);},
+			load: function(data){
+				var parsed;
+				try{
+					parsed = JSON.parse(data);
+					dojo.publish(_target,[{method:'GET',item:parsed}]);
+					def.resolve(parsed);
+				} catch (e) {
+					def.reject("Data back from server was malformed JSON: " + data);
+				}
+			},
+			error: function(err){def.reject(err);},
 			failOk: true
 		});
+		return def;
 	},
 
 	put: function(object, options){
@@ -76,17 +91,29 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 			return null;
 		}
 
-		return dojo.xhrPut({
+		var def = new dojo.Deferred();
+		dojo.xhrPut({
 			url: this.target + id,
 			content: object,
-			handleAs: "json",
+			handleAs: "text",
 			headers:{
 //				"Content-Type": "application/json",
 				Accept: "application/javascript, application/json"
 			},
-			load: function(data){dojo.publish(_target,[{method:'PUT',item:data}]);},
+			load: function(data){
+				var parsed;
+				try{
+					parsed = JSON.parse(data);
+					dojo.publish(_target,[{method:'PUT',item:parsed}]);
+					def.resolve(parsed);
+				} catch (e) {
+					def.reject("Data back from server was malformed JSON: " + data);
+				}
+			},
+			error: function(err){def.reject(err);},
 			failOk: true
 		});
+		return def;
 	},
 
 	add: function(object, options){
@@ -100,17 +127,29 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 		options = options || {};
 		var _target = this.target;
 
-		return dojo.xhrPost({
+		var def = new dojo.Deferred();
+		dojo.xhrPost({
 			url: this.target,
 			content: object,
-			handleAs: "json",
+			handleAs: "text",
 			headers:{
 //				"Content-Type": "application/json",
-				"Accept": "application/javascript, application/json"
+				Accept: "application/javascript, application/json"
 			},
-			load: function(data){dojo.publish(_target,[{method:'POST',item:data}]);},
+			load: function(data){
+				var parsed;
+				try{
+					parsed = JSON.parse(data);
+					dojo.publish(_target,[{method:'POST',item:parsed}]);
+					def.resolve(parsed);
+				} catch (e) {
+					def.reject("Data back from server was malformed JSON: " + data);
+				}
+			},
+			error: function(err){def.reject(err);},
 			failOk: true
 		});
+		return def;
 	},
 
 	remove: function(id){
@@ -120,14 +159,28 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 		//		The identity to use to delete the object
 		var _target = this.target;
 		
-		return dojo.xhrDelete({
-			url:this.target + id,
-			headers: {
+		var def = new dojo.Deferred();
+		dojo.xhrDelete({
+			url: this.target + id,
+			handleAs: "text",
+			headers:{
+//				"Content-Type": "application/json",
 				Accept: "application/javascript, application/json"
 			},
-			load: function(data){dojo.publish(_target,[{method:'DELETE',id:id}]);},
+			load: function(data){
+				var parsed;
+				try{
+					parsed = JSON.parse(data);
+					dojo.publish(_target,[{method:'DELETE',id:id}]);
+					def.resolve(parsed);
+				} catch (e) {
+					def.reject("Data back from server was malformed JSON: " + data);
+				}
+			},
+			error: function(err){def.reject(err);},
 			failOk: true
 		});
+		return def;
 	},
 
 	query: function(query, options){
@@ -163,17 +216,30 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 			}
 			query += ")";
 		}
+		var def = new dojo.Deferred();
 		var results = dojo.xhrGet({
 			url: this.target + (query || ""),
-			handleAs: "json",
+			handleAs: "text",
 			headers: headers,
-			load: function(data,ioArgs){dojo.publish(_target,[{method:'QUERY',items:data,query:ioArgs.query}]);},
+			load: function(data,ioArgs){
+				var parsed;
+				try{
+					parsed = JSON.parse(data);
+					dojo.publish(_target,[{method:'QUERY',items:parsed,query:ioArgs.query}]);
+					def.resolve(parsed);
+				} catch(e){
+					def.reject("Data back from server was malformed JSON: " + data);
+				}
+			},
+			error: function(err){def.reject(err);},
 			failOk: true
 		});
-		results.total = results.then(function(){
+
+		def.total = def.then(function(){
 			var range = results.ioArgs.xhr.getResponseHeader("Content-Range");
 			return range && (range=range.match(/\/(.*)/)) && +range[1];
 		});
-		return dojo.store.util.QueryResults(results);
+
+		return def;
 	}
 });

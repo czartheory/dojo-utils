@@ -85,7 +85,6 @@ dojo.declare("czarTheory.dijits.views._EntityView",[dijit._Widget, dijit._Templa
 	updateAnimationProperties: null,
 	
 	_setValueAttr: function(data){
-		console.log("setting values:", data, "onto properties:",this.properties)
 		var changed = {};
 		var prop;
 		var i;
@@ -102,7 +101,6 @@ dojo.declare("czarTheory.dijits.views._EntityView",[dijit._Widget, dijit._Templa
 		}
 		this._updateDom(changed);
 		if(this.animateOnUpdate) this._updateAnimation.play();
-		console.log("played.");
 	},
 	
 	_getValueAttr: function(){
@@ -110,8 +108,8 @@ dojo.declare("czarTheory.dijits.views._EntityView",[dijit._Widget, dijit._Templa
 		var prop;
 		for(prop in this.properties){
 			var item = this.properties[prop];
-			if(typeof item === "object"){output[prop] = item.id;}
-			else {output[prop] = item}
+			if(item && typeof item === "object"){item = item.id;}
+			output[prop] = item;
 		}
 		return output;
 	},
@@ -121,9 +119,7 @@ dojo.declare("czarTheory.dijits.views._EntityView",[dijit._Widget, dijit._Templa
 	},
 	
 	_setCanUpdateAttr: function(canUpdate){
-//		if(this.canUpdate == canUpdate) return;
 		if(!this.updateAnchor) return;
-
 		if(canUpdate){
 			dojo.removeClass(this.updateAnchor, "dijitHidden");
 		} else {
@@ -132,9 +128,7 @@ dojo.declare("czarTheory.dijits.views._EntityView",[dijit._Widget, dijit._Templa
 	},
 	
 	_setCanDeleteAttr: function(canDelete){
-//		if(this.canDelete == canDelete) return;
 		if(!this.deleteAnchor) return;
-
 		if(canDelete){
 			dojo.removeClass(this.deleteAnchor, "dijitHidden");
 		} else {
@@ -145,11 +139,19 @@ dojo.declare("czarTheory.dijits.views._EntityView",[dijit._Widget, dijit._Templa
 	_updateDom: function(changes){
 		var prop;
 		for(prop in changes){
-			var item = changes[prop];
-			if(typeof item === "object") {this.set(prop,item.label)}
-			else {
-				this.set(prop,item);
-			}
+			var value = changes[prop];
+			if(value && typeof value === "object" && "label" in value){value = value.label;}
+
+			var names = this._getAttrNames(prop);
+			if(this[names.s]){
+				// use the explicit setter
+				this[names.s].apply(this, [value]);
+			}else{
+				// if param is specified as DOM node attribute, copy it
+				if(prop in this.attributeMap){
+					this._attrToDom(prop, value);
+				}
+			}		
 		}
 	},
 

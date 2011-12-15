@@ -38,11 +38,13 @@ dojo.declare("czarTheory.dijits.SimpleAjaxButton",[dijit.form.Button], {
 			});
 			this._actionButton = new dijit.form.Button({
 				label:"Yes",
+				baseClass: this.baseClass,
 				onClick: dojo.hitch(this, this._makeRequest)
 			}).placeAt(this.confirmDialog.containerNode);
 			dojo.create('span', {innerHTML:'&nbsp;&nbsp;'}, this.confirmDialog.containerNode);
 			this._cancelButton = new dijit.form.Button({
 				label:"Cancel",
+				baseClass: "gray dijitButton",
 				onClick: dojo.hitch(this, function(){this.confirmDialog.hide();})
 			}).placeAt(this.confirmDialog.containerNode);
 		} else this._actionButton = this;

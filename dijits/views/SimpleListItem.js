@@ -8,9 +8,12 @@ dojo.require("czarTheory.dijits.views._EntityView");
 
 dojo.declare("czarTheory.dijits.views.SimpleListItem", czarTheory.dijits.views._EntityView, {
 	
-	templateString: dojo.cache('czarTheory.dijits.views', 'SimpleListItem.html'),
+	 normalBackgroundColor: "#abbbd1"
+//	,flashBackgroundColor: 
 	
-	attributeMap: {
+	,templateString: dojo.cache('czarTheory.dijits.views', 'SimpleListItem.html')
+	
+	,attributeMap: {
 		id: "",
 		label: {node: "labelNode", type:"innerHTML"}
 	}

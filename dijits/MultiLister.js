@@ -141,7 +141,6 @@ dojo.declare("czarTheory.dijits.MultiLister",[dijit._Widget,dijit._Templated],{
 			if(null != link) {
 				var type = dojo.attr(link, 'data-dojo-attach-point');
 				if(type == 'deleteAnchor'){
-					console.log("setting current item to: ",widget);
 					this._currentItem = widget;
 					if(this._confirmDeleteDialog) {this._confirmDeleteDialog.show();}
 					else this._deleteCurrent();
@@ -212,9 +211,14 @@ dojo.declare("czarTheory.dijits.MultiLister",[dijit._Widget,dijit._Templated],{
 		this._formDialog.show();
 	},
 	
+	_getCurrentData: function(){
+		return this._currentItem.get("value");
+	},
+	
 	_prepFormForUpdate: function(){
 		this._currentAction = "update";
-		var data = this._currentItem.get("value");
+		var data = this._getCurrentData();
+		console.log("setting form with these values:",data);
 		this._form.reset();
 		this._form.set("value",data);
 		this._formDialog.set("title",this.dialogUpdateLabel);
@@ -227,7 +231,7 @@ dojo.declare("czarTheory.dijits.MultiLister",[dijit._Widget,dijit._Templated],{
 			var placeholder = dojo.query(node).siblings('[data-placeholder-for$='+ item.id + ']')[0];
 			if(placeholder != null) {
 				dojo.removeClass(placeholder, 'dijitHidden');
-				var value = this._currentItem.get(item.id);
+				var value = data[item.id];
 				if(typeof value === 'object'){value = value.label;}
 				placeholder.innerHTML = value;
 				dojo.addClass(node, 'dijitHidden');
@@ -269,6 +273,7 @@ dojo.declare("czarTheory.dijits.MultiLister",[dijit._Widget,dijit._Templated],{
 	_currentUpdated: function(data){
 		this._dismissFormDialog();
 		this._currentItem.set("value",data);
+		this._activateItem(this._currentItem);
 		this._currentItem = null;
 	},
 	
@@ -284,6 +289,7 @@ dojo.declare("czarTheory.dijits.MultiLister",[dijit._Widget,dijit._Templated],{
 		}
 		
 		var _this = this;
+		console.log("requesting delete");
 		dojo.when(
 			this.objectStore.remove(_this._currentItem.getId()),
 			dojo.hitch(this,"_currentDeleted"),
@@ -292,12 +298,14 @@ dojo.declare("czarTheory.dijits.MultiLister",[dijit._Widget,dijit._Templated],{
 	},
 	
 	_currentDeleted: function(){
+		console.log("current deleted");
 		if(this._confirmDeleteDialog != null) {this._confirmDeleteDialog.hide();}
 		this._deleteButton.set("disabled",false);
 		this._deleteButton.set('iconClass',"");
-		this._currentItem.destroy();
+		var recent = this._currentItem;
 		this._currentItem = null;
 		this._activateItem(null);
+		recent.destroy();
 	},
 
 	_cancelDelete: function(){
