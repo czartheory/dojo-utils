@@ -15,14 +15,14 @@ dojo.declare("czarTheory.dijits.ModalAjaxForm",[dijit._Widget, dijit._Templated]
 	
 	buttonLabel:"button",
 	dialogTitle:"title",
-	
-	lastDeferred: null,
-	dialogForm:null,
-	errorTooltip: null,
-	_actionButton: null,
 	href: '',
 	method: '',
 	draggable: false,
+	
+	_lastDeferred: null,
+	_form:null,
+	_errorTooltip: null,
+	_actionButton: null,
 	
 	constructor:function(){
 		this.href = null;
@@ -39,37 +39,39 @@ dojo.declare("czarTheory.dijits.ModalAjaxForm",[dijit._Widget, dijit._Templated]
 		var i;
 		for (i = 0; i<foundWidgets.length; i++) {
 			if(foundWidgets[i].declaredClass == "dijit.form.Form"){
-				this.dialogForm = foundWidgets[i];
+				this._form = foundWidgets[i];
 				break;
 			}
 		}
+		if(!this._form) throw new Error('No dijit.form.form widget found inside widget: '+ this.id);
 
-		var formNode = this.dialogForm.domNode;
+		var formNode = this._form.domNode;
 		dojo.removeClass(formNode, 'dijitHidden');
 		
-		if(this.href == null) this.href = this.dialogForm.action;
-		if(this.method == null) this.method = this.dialogForm.method;
+		if(this.href == null) this.href = this._form.action;
+		if(this.method == null) this.method = this._form.method;
 	
-		var formElements = this.dialogForm.getChildren();
+		var formElements = this._form.getChildren();
 		for (i = formElements.length-1; i>=0; i--){
 			if(formElements[i].type == "submit") {
 				this._actionButton = formElements[i];
 				break;
 			}
 		}
+
 		if(this._actionButton == null) {
 			console.log("No submit button found in form: " + this.widgetId);
 		} else {
-			if(this.dialogForm.get("state") != "") this._actionButton.set("disabled",true);
+			if(this._form.get("state") != "") this._actionButton.set("disabled",true);
 		}
 		
-		this.dialogForm.watch("state",dojo.hitch(this, function(watch,oldState,newState){
+		this._form.watch("state",dojo.hitch(this, function(watch,oldState,newState){
 			var disabled = (newState == "") ? false : true;
 			this._actionButton.set("disabled",disabled);
 			if(!disabled) this._actionButton.set("iconClass","");
 		}));
 		
-		dojo.connect(this.dialogForm,'onSubmit', this, this._makeRequest);
+		dojo.connect(this._form,'onSubmit', this, this._makeRequest);
 		dojo.connect(this.dialogNode,'onHide',this, this._onCancel);
 		dojo.connect(this.buttonNode, "onClick", this, function(evt){
 			this.dialogNode.show();
@@ -78,10 +80,10 @@ dojo.declare("czarTheory.dijits.ModalAjaxForm",[dijit._Widget, dijit._Templated]
 	},
 	
 	_onCancel: function(){
-		if(null !== this.lastDeferred){this.lastDeferred.cancel();}
-		if(null !== this.errorTooltip){
-			this.errorTooltip.close();
-			this.errorTooltip.removeTarget(this._actionButton.domNode);
+		if(null !== this._lastDeferred){this._lastDeferred.cancel();}
+		if(null !== this._errorTooltip){
+			this._errorTooltip.close();
+			this._errorTooltip.removeTarget(this._actionButton.domNode);
 			this._actionButton.set("iconClass","");
 		}
 	},
@@ -96,9 +98,9 @@ dojo.declare("czarTheory.dijits.ModalAjaxForm",[dijit._Widget, dijit._Templated]
 		this._actionButton.set("disabled",true);	
 		this._actionButton.set("iconClass","dijitIconWaiting");
 
-		if(null !== this.errorTooltip) {
-			this.errorTooltip.close();
-			this.errorTooltip.removeTarget(this._actionButton.domNode);
+		if(null !== this._errorTooltip) {
+			this._errorTooltip.close();
+			this._errorTooltip.removeTarget(this._actionButton.domNode);
 		}
 
 		if(null == this.href) {
@@ -106,19 +108,23 @@ dojo.declare("czarTheory.dijits.ModalAjaxForm",[dijit._Widget, dijit._Templated]
 			return;
 		}
 		
-		if(this.dialogForm.get("state") == "") {
-			this.lastDeferred = dojo.xhr(this.method,{
-				url: this.href,
-				form: this.dialogForm.domNode,
-				headers: {"accept" : "application/json"},
-				load: dojo.hitch(this, this._requestCompleted),
-				error: dojo.hitch(this, this._requestError),
-				failOk: true
-			});
+		if(this._form.get("state") == "") {
+			this._submitForm();
 		} else {
 			this._onInvalid();
 		}
 	},	
+	
+	_submitForm: function(){
+		this._lastDeferred = dojo.xhr(this.method,{
+			url: this.href,
+			form: this._form.domNode,
+			headers: {"accept" : "application/json"},
+			load: dojo.hitch(this, this._requestCompleted),
+			error: dojo.hitch(this, this._requestError),
+			failOk: true
+		});
+	},
 	
 	_requestError:function(error){
 		var data;
@@ -151,9 +157,9 @@ dojo.declare("czarTheory.dijits.ModalAjaxForm",[dijit._Widget, dijit._Templated]
 	},
 
 	_initErrorTooltip: function(){
-		if(null === this.errorTooltip){
+		if(null === this._errorTooltip){
 			dojo.require("dijit.Tooltip");
-			this.errorTooltip = new dijit.Tooltip ({
+			this._errorTooltip = new dijit.Tooltip ({
 				label: 'An Error has Occured.<br/>We\'re still working out kinks.',
 				showDelay: 100
 			});
@@ -165,7 +171,6 @@ dojo.declare("czarTheory.dijits.ModalAjaxForm",[dijit._Widget, dijit._Templated]
 	},
 	
 	onError: function(error){
-		console.log("ERRORRRRR");
 		console.log(error);
 		if(error.invalid != null){
 			this._onInvalid(error.invalid);
@@ -177,8 +182,8 @@ dojo.declare("czarTheory.dijits.ModalAjaxForm",[dijit._Widget, dijit._Templated]
 		this._actionButton.set("disabled",false);
 		this._actionButton.set("iconClass","dijitIconError");
 		this._initErrorTooltip();
-		this.errorTooltip.addTarget(this._actionButton.domNode);
-		this.errorTooltip.open(this._actionButton.domNode);
+		this._errorTooltip.addTarget(this._actionButton.domNode);
+		this._errorTooltip.open(this._actionButton.domNode);
 	},
 
 	_onInvalid: function(invalid){
@@ -186,7 +191,7 @@ dojo.declare("czarTheory.dijits.ModalAjaxForm",[dijit._Widget, dijit._Templated]
 		this._actionButton.set("iconClass","dijitIconError");
 		
 		var i;
-		var formElements = this.dialogForm.getDescendants();
+		var formElements = this._form.getDescendants();
 		for (i=0;i<formElements.length;i++){
 			var element = formElements[i];
 			var name = element.name;
@@ -203,7 +208,7 @@ dojo.declare("czarTheory.dijits.ModalAjaxForm",[dijit._Widget, dijit._Templated]
 				}
 			}
 		}
-		this.dialogForm.validate();
+		this._form.validate();
 	},
 	
 	_monkeySwapValidator: function(item, message){
@@ -248,7 +253,7 @@ dojo.declare("czarTheory.dijits.ModalAjaxForm",[dijit._Widget, dijit._Templated]
 		var onChange;
 		var onFocus;
 		var originalValue = item.get("value");
-		var self = this;
+		var _this = this;
 
 		item.validate = function(){
 			var current = item.get("value");
@@ -271,8 +276,8 @@ dojo.declare("czarTheory.dijits.ModalAjaxForm",[dijit._Widget, dijit._Templated]
 		onChange = dojo.connect(item,"onKeyUp",item, function(){item.validate();});
 		onFocus = dojo.connect(item,"onFocus",item,function(){item.validate();});
 		
-		this.dialogForm._childWatches.push(item.watch("state",function(attr,oldVal,newVal){
-			self.dialogForm.set("state",self.dialogForm._getState());
+		this._form._childWatches.push(item.watch("state",function(attr,oldVal,newVal){
+			_this._form.set("state",_this._form._getState());
 		}));
 	}
 });

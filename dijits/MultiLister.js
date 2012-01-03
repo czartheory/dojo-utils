@@ -82,6 +82,7 @@ dojo.declare("czarTheory.dijits.MultiLister",[dijit._Widget,dijit._Templated],{
 				break;
 			}
 		}
+		if(!this._form) throw new Error('No dijit.form.form widget found inside widget: '+ this.id);
 	
 		var formNode = this._form.domNode;
 		dojo.removeClass(formNode,'dijitHidden');
@@ -299,7 +300,6 @@ dojo.declare("czarTheory.dijits.MultiLister",[dijit._Widget,dijit._Templated],{
 	},
 	
 	_currentDeleted: function(){
-		console.log("current deleted");
 		if(this._confirmDeleteDialog != null) {this._confirmDeleteDialog.hide();}
 		this._deleteButton.set("disabled",false);
 		this._deleteButton.set('iconClass',"");

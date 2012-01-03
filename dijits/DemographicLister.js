@@ -21,15 +21,10 @@ dojo.declare("czarTheory.dijits.DemographicLister",[czarTheory.dijits._FlyoutMul
 	
 	,templateString: dojo.cache('czarTheory.dijits', 'DemographicLister.html')
 	
-	,getPrevious: function(node){
-		var previous = node.previousSibling;
-		while(previous && previous.nodeType != 1){previous = previous.previousSibling;}
-		return previous;
-	}
-	
 	,refresh: function(){
 		var isOrdered = false;
 		switch(this.distributionWidget.displayedValue){
+			case '':
 			case 'Identifier':
 			case 'Unique Identifier':
 				dojo.addClass(this.optionsNode,'dijitHidden');

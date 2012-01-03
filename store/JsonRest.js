@@ -59,11 +59,12 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 				var parsed;
 				try{
 					parsed = JSON.parse(data);
-					dojo.publish(_target,[{method:'GET',item:parsed}]);
-					def.resolve(parsed);
 				} catch (e) {
 					def.reject("Data back from server was malformed JSON: " + data);
+					return;
 				}
+				dojo.publish(_target,[{method:'GET',item:parsed}]);
+				def.resolve(parsed);
 			},
 			error: function(err){def.reject(err);},
 			failOk: true
@@ -104,11 +105,12 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 				var parsed;
 				try{
 					parsed = JSON.parse(data);
-					dojo.publish(_target,[{method:'PUT',item:parsed}]);
-					def.resolve(parsed);
 				} catch (e) {
 					def.reject("Data back from server was malformed JSON: " + data);
+					return;
 				}
+				dojo.publish(_target,[{method:'PUT',item:parsed}]);
+				def.resolve(parsed);
 			},
 			error: function(err){def.reject(err);},
 			failOk: true
@@ -140,11 +142,12 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 				var parsed;
 				try{
 					parsed = JSON.parse(data);
-					dojo.publish(_target,[{method:'POST',item:parsed}]);
-					def.resolve(parsed);
 				} catch (e) {
 					def.reject("Data back from server was malformed JSON: " + data);
+					return;
 				}
+				dojo.publish(_target,[{method:'POST',item:parsed}]);
+				def.resolve(parsed);
 			},
 			error: function(err){def.reject(err);},
 			failOk: true
@@ -171,11 +174,12 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 				var parsed;
 				try{
 					parsed = JSON.parse(data);
-					dojo.publish(_target,[{method:'DELETE',id:id}]);
-					def.resolve(parsed);
 				} catch (e) {
 					def.reject("Data back from server was malformed JSON: " + data);
+					return;
 				}
+				dojo.publish(_target,[{method:'DELETE',id:id}]);
+				def.resolve(parsed);
 			},
 			error: function(err){def.reject(err);},
 			failOk: true
@@ -222,14 +226,15 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 			handleAs: "text",
 			headers: headers,
 			load: function(data,ioArgs){
-				var parsed;
+				var parsed = null;
 				try{
 					parsed = JSON.parse(data);
-					dojo.publish(_target,[{method:'QUERY',items:parsed,query:ioArgs.query}]);
-					def.resolve(parsed);
 				} catch(e){
 					def.reject("Data back from server was malformed JSON: " + data);
+					return;
 				}
+				dojo.publish(_target,[{method:'QUERY',items:parsed,query:ioArgs.query}]);
+				def.resolve(parsed);
 			},
 			error: function(err){def.reject(err);},
 			failOk: true

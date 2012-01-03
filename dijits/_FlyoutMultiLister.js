@@ -51,4 +51,11 @@ dojo.declare("czarTheory.dijits._FlyoutMultiLister",[czarTheory.dijits.MultiList
 		this.inherited(arguments);
 		this.storeContentsNode.scrollTop = this.storeContentsNode.scrollHeight;
 	}
+
+	,getPrevious: function(node){
+		var previous = node.previousSibling;
+		while(previous && previous.nodeType != 1){previous = previous.previousSibling;}
+		return previous;
+	}
+	
 });
