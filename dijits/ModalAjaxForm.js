@@ -35,6 +35,7 @@ dojo.declare("czarTheory.dijits.ModalAjaxForm",[dijit._Widget, dijit._Templated]
 	startup: function(){
 		this.inherited(arguments);
 		
+		//Looking for a dojo form within the dialog
 		var foundWidgets = dijit.findWidgets(this.dialogNode.containerNode);
 		var i;
 		for (i = 0; i<foundWidgets.length; i++) {
@@ -46,11 +47,14 @@ dojo.declare("czarTheory.dijits.ModalAjaxForm",[dijit._Widget, dijit._Templated]
 		if(!this._form) throw new Error('No dijit.form.form widget found inside widget: '+ this.id);
 
 		var formNode = this._form.domNode;
+		//unhiding the form if hidden (to prevent FOUC)
 		dojo.removeClass(formNode, 'dijitHidden');
 		
+		//Deciding on the form's destination url
 		if(this.href == null) this.href = this._form.action;
 		if(this.method == null) this.method = this._form.method;
 	
+		//Locating the submit button
 		var formElements = this._form.getChildren();
 		for (i = formElements.length-1; i>=0; i--){
 			if(formElements[i].type == "submit") {
@@ -59,18 +63,21 @@ dojo.declare("czarTheory.dijits.ModalAjaxForm",[dijit._Widget, dijit._Templated]
 			}
 		}
 
+		//because it's required
 		if(this._actionButton == null) {
 			console.log("No submit button found in form: " + this.widgetId);
 		} else {
 			if(this._form.get("state") != "") this._actionButton.set("disabled",true);
 		}
 		
+		//Allow submit button to be disabled if it's state is bad
 		this._form.watch("state",dojo.hitch(this, function(watch,oldState,newState){
 			var disabled = (newState == "") ? false : true;
 			this._actionButton.set("disabled",disabled);
 			if(!disabled) this._actionButton.set("iconClass","");
 		}));
 		
+		//Connecting the buttons (the main button, submit button, and the close button)
 		dojo.connect(this._form,'onSubmit', this, this._makeRequest);
 		dojo.connect(this.dialogNode,'onHide',this, this._onCancel);
 		dojo.connect(this.buttonNode, "onClick", this, function(evt){
@@ -90,14 +97,14 @@ dojo.declare("czarTheory.dijits.ModalAjaxForm",[dijit._Widget, dijit._Templated]
 	
 	_makeRequest: function(evt){
 		console.log("making request");
-		evt.preventDefault();
-		evt.stopPropagation();
+		dojo.stopEvent(evt);
 		
 		if(this._actionButton.get("disabled")) return;
 		
 		this._actionButton.set("disabled",true);	
 		this._actionButton.set("iconClass","dijitIconWaiting");
 
+		//if a submit happended previously and there was an error, do this:
 		if(null !== this._errorTooltip) {
 			this._errorTooltip.close();
 			this._errorTooltip.removeTarget(this._actionButton.domNode);
