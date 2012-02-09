@@ -15,20 +15,14 @@ dojo.declare("czarTheory.dijits.ModalAjaxForm",[dijit._Widget, dijit._Templated]
 	
 	buttonLabel:"button",
 	dialogTitle:"title",
-	href: '',
-	method: '',
+	href: '__BLANK__',
+	method: '__BLANK__',
 	draggable: false,
 	
 	_lastDeferred: null,
 	_form:null,
 	_errorTooltip: null,
 	_actionButton: null,
-	
-	constructor:function(){
-		this.href = null;
-		this.method = null;
-		this.inherited(arguments);
-	},
 	
 	templateString: dojo.cache('czarTheory.dijits','ModalAjaxForm.html'),
 	
@@ -51,8 +45,8 @@ dojo.declare("czarTheory.dijits.ModalAjaxForm",[dijit._Widget, dijit._Templated]
 		dojo.removeClass(formNode, 'dijitHidden');
 		
 		//Deciding on the form's destination url
-		if(this.href == null) this.href = this._form.action;
-		if(this.method == null) this.method = this._form.method;
+		if(this.href === '__BLANK__') this.href = this._form.action;
+		if(this.method === '__BLANK__') this.method = this._form.method;
 	
 		//Locating the submit button
 		var formElements = this._form.getChildren();
@@ -97,7 +91,8 @@ dojo.declare("czarTheory.dijits.ModalAjaxForm",[dijit._Widget, dijit._Templated]
 	
 	_makeRequest: function(evt){
 		console.log("making request");
-		dojo.stopEvent(evt);
+		evt.preventDefault();
+		evt.stopPropagation();
 		
 		if(this._actionButton.get("disabled")) return;
 		
@@ -133,18 +128,26 @@ dojo.declare("czarTheory.dijits.ModalAjaxForm",[dijit._Widget, dijit._Templated]
 		});
 	},
 	
-	_requestError:function(error){
+	_requestError:function(error,ioArgs){
+		console.log("request error: ",error,ioArgs);
+		console.log("lastDeferred",this._lastDeferred);
+		return;
 		var data;
 		try{
-			data = JSON.parse(error.responseText);
-			if(data.error) data = data.error;
+			data = JSON.parse(ioArgs.xhr.responseText);
 		} catch(e) {
-			data = error.responseText;
+			data = error.ioArgs.xhr.responseText;
 		}
-		this.onError(data);
+		
+		if(data && data.invalid != null){
+			this._onInvalid(data.invalid);
+		} else {
+			this.onError(data);
+		}
 	},
 		
 	_requestCompleted: function(data){
+		console.log("request completed",data);
 		var error = null;
 		try{
 			data = JSON.parse(data);
@@ -178,7 +181,7 @@ dojo.declare("czarTheory.dijits.ModalAjaxForm",[dijit._Widget, dijit._Templated]
 	},
 	
 	onError: function(error){
-		console.log(error);
+		console.log("dealing with error",error);
 		if(error.invalid != null){
 			this._onInvalid(error.invalid);
 			return;

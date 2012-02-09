@@ -346,16 +346,11 @@ dojo.declare("czarTheory.dijits.MultiLister",[dijit._Widget,dijit._Templated],{
 	},
 	
 	_formRequestError: function(error){
-		var data;
-		try{
-			data = JSON.parse(error.responseText);
-			if(data.error) data = data.error;
-		} catch(e){
-			data = error.responseText;
-		}
+		var data = error.response;
+		if(data != null) error = data;
 		
-		if(data.invalid != null){
-			this._formInvalid(data.invalid);
+		if(error.invalid != null){
+			this._formInvalid(error.invalid);
 			return;
 		}
 		

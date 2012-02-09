@@ -66,7 +66,16 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 				dojo.publish(_target,[{method:'GET',item:parsed}]);
 				def.resolve(parsed);
 			},
-			error: function(err){def.reject(err);},
+			error: function(err,ioArgs){
+				var responseText = ioArgs.xhr.responseText();
+				try{
+					parsed = JSON.parse(responseText);
+					err.response = parsed;
+				} catch (e){
+					err.response = {'malformedJson': responseText};
+				}
+				def.reject(err);
+			},
 			failOk: true
 		});
 		return def;
@@ -112,7 +121,16 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 				dojo.publish(_target,[{method:'PUT',item:parsed}]);
 				def.resolve(parsed);
 			},
-			error: function(err){def.reject(err);},
+			error: function(err,ioArgs){
+				var responseText = ioArgs.xhr.responseText();
+				try{
+					parsed = JSON.parse(responseText);
+					err.response = parsed;
+				} catch (e){
+					err.response = {'malformedJson': responseText};
+				}
+				def.reject(err);
+			},
 			failOk: true
 		});
 		return def;
@@ -149,7 +167,16 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 				dojo.publish(_target,[{method:'POST',item:parsed}]);
 				def.resolve(parsed);
 			},
-			error: function(err){def.reject(err);},
+			error: function(err,ioArgs){
+				var responseText = ioArgs.xhr.responseText();
+				try{
+					parsed = JSON.parse(responseText);
+					err.response = parsed;
+				} catch (e){
+					err.response = {'malformedJson': responseText};
+				}
+				def.reject(err);
+			},
 			failOk: true
 		});
 		return def;
@@ -181,7 +208,16 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 				dojo.publish(_target,[{method:'DELETE',id:id}]);
 				def.resolve(parsed);
 			},
-			error: function(err){def.reject(err);},
+			error: function(err,ioArgs){
+				var responseText = ioArgs.xhr.responseText();
+				try{
+					parsed = JSON.parse(responseText);
+					err.response = parsed;
+				} catch (e){
+					err.response = {'malformedJson': responseText};
+				}
+				def.reject(err);
+			},
 			failOk: true
 		});
 		return def;
@@ -236,7 +272,16 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 				dojo.publish(_target,[{method:'QUERY',items:parsed,query:ioArgs.query}]);
 				def.resolve(parsed);
 			},
-			error: function(err){def.reject(err);},
+			error: function(err,ioArgs){
+				var responseText = ioArgs.xhr.responseText();
+				try{
+					parsed = JSON.parse(responseText);
+					err.response = parsed;
+				} catch (e){
+					err.response = {'malformedJson': responseText};
+				}
+				def.reject(err);
+			},
 			failOk: true
 		});
 
