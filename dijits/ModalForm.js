@@ -79,6 +79,7 @@ dojo.declare("czarTheory.dijits.ModalForm",[dijit._Widget, dijit._Templated], {
 			}).placeAt(this.domNode, 'before');
 			buttonEvt = 'onClick';
 		}
+		if(this.baseClass != null) dojo.addClass(this.buttonNode,this.baseClass);
 
 		//Connecting the buttons (the main button, submit button, and the close button)
 		dojo.connect(this._form,'onSubmit', this, function(evt){
