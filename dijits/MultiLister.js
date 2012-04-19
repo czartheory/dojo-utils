@@ -131,7 +131,6 @@ dojo.declare("czarTheory.dijits.MultiLister",[dijit._Widget,dijit._Templated],{
 		});
 		
 		dojo.connect(this.storeContentsNode, 'onclick', this, function(evt){
-			dojo.stopEvent(evt);
 			var target = evt.target;
 			var traversable = dojo.query(target);
 			var node = traversable.closest('li')[0];
@@ -143,10 +142,12 @@ dojo.declare("czarTheory.dijits.MultiLister",[dijit._Widget,dijit._Templated],{
 			if(null != link) {
 				var type = dojo.attr(link, 'data-dojo-attach-point');
 				if(type == 'deleteAnchor'){
+					dojo.stopEvent(evt);
 					this._currentItem = widget;
 					if(this._confirmDeleteDialog) {this._confirmDeleteDialog.show();}
 					else this._deleteCurrent();
 				} else if(type == 'updateAnchor'){
+					dojo.stopEvent(evt);
 					this._currentItem = widget;
 					this._prepFormForUpdate();
 				} else {
