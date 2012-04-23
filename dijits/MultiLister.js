@@ -120,8 +120,8 @@ dojo.declare("czarTheory.dijits.MultiLister",[dijit._Widget,dijit._Templated],{
 		dojo.when(this.objectStore.query(),function(results){
 			for(var i=0;i<results.length;i++){
 				var data = results[i];
-				if(!this.checkEachUpdate){data.canUpdate = this.canUpdate;}
-				if(!this.checkEachDelete){data.canDelete = this.canDelete;}
+				if(!_this.checkEachUpdate){data.canUpdate = _this.canUpdate;}
+				if(!_this.checkEachDelete){data.canDelete = _this.canDelete;}
 				
 				var item = _this.itemConstructor({properties:data, animateOnCreate:false, idProperty:_this.idProperty});
 				item.placeAt(_this.storeContentsNode);
