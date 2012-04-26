@@ -73,13 +73,11 @@ dojo.declare("czarTheory.dijits.ModalAjaxForm",[czarTheory.dijits.ModalForm], {
 
 	,_requestError:function(error,ioArgs){
 		console.log("request error: ",error,ioArgs);
-		console.log("lastDeferred",this._lastDeferred);
-		return;
 		var data;
 		try{
 			data = JSON.parse(ioArgs.xhr.responseText);
 		} catch(e) {
-			data = error.ioArgs.xhr.responseText;
+			data = ioArgs.xhr.responseText;
 		}
 
 		if(data && data.invalid != null){

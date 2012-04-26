@@ -127,12 +127,18 @@ dojo.declare("czarTheory.dijits.AjaxForm",[dijit._Widget, dijit._Templated], {
 		console.log("request error: ",error,ioArgs);
 
 		var data;
+		try{
+			data = JSON.parse(ioArgs.xhr.responseText);
+		} catch(e) {
+			console.log("parse error happened!");
+			data = ioArgs.xhr.responseText;
+		}
 
-		try{data = JSON.parse(ioArgs.xhr.responseText);}
-		catch(e) {data = error.ioArgs.xhr.responseText;}
-
-		if(data && data.invalid != null) {this._onInvalid(data.invalid);}
-		else {this.onError(data);}
+		if(data.invalid != null) {
+			this._onInvalid(data.invalid);
+		} else {
+			this.onError(data);
+		}
 	}
 
 	,_requestCompleted: function(data){
