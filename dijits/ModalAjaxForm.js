@@ -96,15 +96,18 @@ dojo.declare("czarTheory.dijits.ModalAjaxForm",[czarTheory.dijits.ModalForm], {
 		} catch(e) {
 			error = "Invalid Json:" + data + ".";
 		}
-		if(error != null) this.onError(error);
-		else this._onSuccess(data);
+		if(error != null) {
+			this.onError(error);
+		} else {
+			this._onSuccess(data);
+		}
 	}
 
 	,_onSuccess: function(data){
 		this._actionButton.set("disabled",false);
 		this._actionButton.set("iconClass","");
-		dojo.hitch(this,this.onSuccess,data)();
 		this.dialogNode.hide();
+		dojo.hitch(this,this.onSuccess,data)();
 	}
 
 	,_initErrorTooltip: function(){
