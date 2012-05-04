@@ -159,7 +159,7 @@ dojo.declare("czarTheory.dijits.MultiLister",[dijit._Widget,dijit._Templated],{
 		});
 	},
 
-	reload: function(){
+	reload: function(callback){
 		var _this = this;
 
 		var oldies = dijit.findWidgets(_this.storeContentsNode);
@@ -167,6 +167,7 @@ dojo.declare("czarTheory.dijits.MultiLister",[dijit._Widget,dijit._Templated],{
 		dojo.forEach(oldies, function(w){w.destroyRecursive();});
 
 		dojo.when(this.objectStore.query(),function(results){
+			_this.numItems = results.length;
 			for(var i=0;i<results.length;i++){
 				var data = results[i];
 				if(!_this.checkEachUpdate){data.canUpdate = _this.canUpdate;}
@@ -175,6 +176,7 @@ dojo.declare("czarTheory.dijits.MultiLister",[dijit._Widget,dijit._Templated],{
 				var item = _this.itemConstructor({properties:data, animateOnCreate:false, idProperty:_this.idProperty});
 				item.placeAt(_this.storeContentsNode);
 			}
+			callback(results.length);
 		},function(error){
 			console.log("error retreiving results back from server: ",error);
 		});
