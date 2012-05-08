@@ -7,6 +7,17 @@ dojo.provide("czarTheory.store.JsonRest");
 dojo.require("dojo.store.util.QueryResults");
 
 dojo.declare("czarTheory.store.JsonRest", null, {
+	// target: String
+	//		The target base URL to use for all requests to the server. This string will be
+	// 	prepended to the id to generate the URL (relative or absolute) for requests
+	// 	sent to the server
+	target: "",
+	
+	// idProperty: String
+	//		Indicates the property to use as the identity property. The values of this
+	//		property should be unique.
+	idProperty: "id",
+
 	constructor: function(/*dojo.store.JsonRest*/ options){
 		// summary:
 		//		This is a basic store for RESTful communicating with a server through JSON
@@ -17,16 +28,6 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 		var last = this.target[this.target.length-1];
 		if(last != '/') this.target += '/';
 	},
-	// target: String
-	//		The target base URL to use for all requests to the server. This string will be
-	// 	prepended to the id to generate the URL (relative or absolute) for requests
-	// 	sent to the server
-	target: "",
-	// idProperty: String
-	//		Indicates the property to use as the identity property. The values of this
-	//		property should be unique.
-	idProperty: "id",
-
 
 	getIdentity: function(object){
 		// summary:
@@ -249,7 +250,7 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 			query = query ? "?" + query: "";
 		}
 		if(options && options.sort){
-			query += (query ? "&" : "?") + "sort(";
+			query += (query ? "&" : "?") + "sort=(";
 			for(var i = 0; i<options.sort.length; i++){
 				var sort = options.sort[i];
 				query += (i > 0 ? "," : "") + (sort.descending ? '-' : '+') + encodeURIComponent(sort.attribute);
