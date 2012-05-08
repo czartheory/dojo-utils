@@ -15,11 +15,15 @@ dojo.declare("czarTheory.dijits.UploadingModalAjaxForm",[czarTheory.dijits.Modal
 			,method: this.method
 			,form: this._form.domNode
 			,load: dojo.hitch(this, this._requestCompleted)
+			,handle: dojo.hitch(this, function(){
+				this._requestCompleted("{}");
+			})
 			,error: dojo.hitch(this, this._requestError)
-			,handle: function(error,ioArgs){
-				console.log("handle",error);
-				console.log("ioArgs:",ioArgs);
-			}
+			//,handle: function(error,ioArgs){
+				//console.log("handle",error);
+				//console.log("ioArgs:",ioArgs);
+				//this.onSuccess();
+			//}
 			,failOk: true
 		});
 	}

@@ -158,7 +158,31 @@ dojo.declare("czarTheory.dijits.MultiLister",[dijit._Widget,dijit._Templated],{
 			}
 		});
 	},
-	
+
+	reload: function(callback){
+		var _this = this;
+
+		var oldies = dijit.findWidgets(_this.storeContentsNode);
+		console.log("oldies:",oldies);
+		dojo.forEach(oldies, function(w){w.destroyRecursive();});
+
+		dojo.when(this.objectStore.query(),function(results){
+			_this.numItems = results.length;
+			for(var i=0;i<results.length;i++){
+				var data = results[i];
+				if(!_this.checkEachUpdate){data.canUpdate = _this.canUpdate;}
+				if(!_this.checkEachDelete){data.canDelete = _this.canDelete;}
+				
+				var item = _this.itemConstructor({properties:data, animateOnCreate:false, idProperty:_this.idProperty});
+				item.placeAt(_this.storeContentsNode);
+			}
+			callback(results.length);
+		},function(error){
+			console.log("error retreiving results back from server: ",error);
+		});
+		
+	},
+
 	_activeItem: null,
 	_activateItem: function(widget){
 		if(null != this._activeItem){
