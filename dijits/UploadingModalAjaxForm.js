@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2011 Czar Theory, LLC
  * All rights reserved.
  */
@@ -8,7 +8,7 @@ dojo.require("czarTheory.dijits.ModalAjaxForm");
 dojo.require("dojo.io.iframe");
 
 dojo.declare("czarTheory.dijits.UploadingModalAjaxForm",[czarTheory.dijits.ModalAjaxForm], {
-	
+
 	_submitForm: function(){
 		this._lastDeferred = dojo.io.iframe.send({
 			url: this.href
