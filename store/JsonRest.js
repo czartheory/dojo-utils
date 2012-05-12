@@ -12,7 +12,7 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 	// 	prepended to the id to generate the URL (relative or absolute) for requests
 	// 	sent to the server
 	target: "",
-	
+
 	// idProperty: String
 	//		Indicates the property to use as the identity property. The values of this
 	//		property should be unique.
@@ -37,7 +37,7 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 		//	returns: Number
 		return object[this.idProperty];
 	},
-	
+
 	get: function(id, options){
 		//	summary:
 		//		Retrieves an object by its identity. This will trigger a GET request to the server using
@@ -48,7 +48,7 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 		//		The object in the store that matches the given id.
 		var headers = options || {};
 		var _target = this.target;
-		
+
 		headers.Accept = "application/javascript, application/json";
 
 		var def = new dojo.Deferred();
@@ -189,7 +189,7 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 		// id: Number
 		//		The identity to use to delete the object
 		var _target = this.target;
-		
+
 		var def = new dojo.Deferred();
 		dojo.xhrDelete({
 			url: this.target + id,
@@ -250,12 +250,11 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 			query = query ? "?" + query: "";
 		}
 		if(options && options.sort){
-			query += (query ? "&" : "?") + "sort=(";
+			query += (query ? "&" : "?") + "sort=";
 			for(var i = 0; i<options.sort.length; i++){
 				var sort = options.sort[i];
 				query += (i > 0 ? "," : "") + (sort.descending ? '-' : '+') + encodeURIComponent(sort.attribute);
 			}
-			query += ")";
 		}
 		var def = new dojo.Deferred();
 		var results = dojo.xhrGet({
