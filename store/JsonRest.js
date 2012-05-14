@@ -249,7 +249,7 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 			query = dojo.objectToQuery(query);
 			query = query ? "?" + query: "";
 		}
-		if(options && options.sort){
+		if(options.sort){
 			query += (query ? "&" : "?") + "sort=";
 			for(var i = 0; i<options.sort.length; i++){
 				var sort = options.sort[i];
