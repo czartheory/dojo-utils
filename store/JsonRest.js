@@ -251,7 +251,7 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 		}
 		if(options.sort){
 			query += (query ? "&" : "?") + "sort=";
-			for(var i = 0; i<options.sort.length; i++){
+			for(var i = 0; i < options.sort.length; ++i){
 				var sort = options.sort[i];
 				query += (i > 0 ? "," : "") + (sort.descending ? '-' : '+') + encodeURIComponent(sort.attribute);
 			}
