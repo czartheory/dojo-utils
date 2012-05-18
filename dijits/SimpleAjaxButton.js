@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2011 Czar Theory, LLC
  * All rights reserved.
  */
@@ -9,7 +9,7 @@ dojo.require("dijit.form.Button");
 dojo.require("dijit.Dialog");
 
 dojo.declare("czarTheory.dijits.SimpleAjaxButton",[dijit.form.Button], {
-	
+
 	href: '',
 	method: 'get',
 	sendParams: {},
@@ -18,14 +18,14 @@ dojo.declare("czarTheory.dijits.SimpleAjaxButton",[dijit.form.Button], {
 	confirmDialog: null,
 	lastDeferred: null,
 	errorTooltip: null,
-	
+
 	constructor: function(){
 		this.confirm = null;
 		this.href = null;
 		this.inherited(arguments);
 	},
-	
-	
+
+
 	startup: function(){
 		this.inherited(arguments);
 		if(null !== this.confirm){
@@ -49,7 +49,7 @@ dojo.declare("czarTheory.dijits.SimpleAjaxButton",[dijit.form.Button], {
 			}).placeAt(this.confirmDialog.containerNode);
 		} else this._actionButton = this;
 	},
-	
+
 	_onCancel: function(){
 		if(null !== this.lastDeferred){this.lastDeferred.cancel()}
 		if(null !== this.errorTooltip){
@@ -58,15 +58,15 @@ dojo.declare("czarTheory.dijits.SimpleAjaxButton",[dijit.form.Button], {
 			this._actionButton.set("iconClass","");
 		}
 	},
-	
+
 	_onClick: function(evt){
 		if(null !== this.confirm) this.confirmDialog.show();
 		else this._makeRequest();
 	},
-	
+
 	_makeRequest: function(){
 		if(this._actionButton.get("disabled")) return;
-		this._actionButton.set("disabled",true);	
+		this._actionButton.set("disabled",true);
 		this._actionButton.set("iconClass","dijitIconWaiting");
 
 		if(null !== this.errorTooltip) {
@@ -81,24 +81,24 @@ dojo.declare("czarTheory.dijits.SimpleAjaxButton",[dijit.form.Button], {
 		this.lastDeferred = dojo.xhr(this.method,{
 			url:this.href,
 			content: this.sendParams,
-			headers: {"accept" : "application/json"},
+			headers: {"Accept" : "application/javascript, application/json"},
 			load: dojo.hitch(this, this._requestCompleted),
 			error: dojo.hitch(this, this._requestError)
 		});
 	},
-	
+
 	_requestError: function(error){
 		console.log("REQUEST ERRORED");
 		this.onError(error);
 	},
-	
-	_requestCompleted: function(data){
+
+	_requestCompleted: function(json){
 		var error = null;
 		try{
-			data = JSON.parse(data);
+			data = JSON.parse(json);
 			if(data.error) error = data.error;
 		} catch(e) {
-			error = "Invalid Json:" + data + ".";
+			error = "Invalid Json:" + json + ".";
 		}
 
 		if(error !== null) this.onError(error);
@@ -115,7 +115,7 @@ dojo.declare("czarTheory.dijits.SimpleAjaxButton",[dijit.form.Button], {
 	onSuccess: function(data, button){
 		console.log("No onSuccess method implemented for this button!");
 	},
-	
+
 	onError: function(error){
 		console.log("An Error Occured.");
 		console.log(error);
