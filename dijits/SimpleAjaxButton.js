@@ -39,7 +39,7 @@ dojo.declare("czarTheory.dijits.SimpleAjaxButton",[dijit.form.Button], {
 			this._actionButton = new dijit.form.Button({
 				label:"Yes",
 				baseClass: this.baseClass,
-				onClick: dojo.hitch(this, this._makeRequest)
+				onClick: dojo.hitch(this, this.onRequest)
 			}).placeAt(this.confirmDialog.containerNode);
 			dojo.create('span', {innerHTML:'&nbsp;&nbsp;'}, this.confirmDialog.containerNode);
 			this._cancelButton = new dijit.form.Button({
@@ -61,7 +61,7 @@ dojo.declare("czarTheory.dijits.SimpleAjaxButton",[dijit.form.Button], {
 
 	_onClick: function(evt){
 		if(null !== this.confirm) this.confirmDialog.show();
-		else this._makeRequest();
+		else this.onRequest();
 	},
 
 	_makeRequest: function(){
@@ -81,7 +81,7 @@ dojo.declare("czarTheory.dijits.SimpleAjaxButton",[dijit.form.Button], {
 		this.lastDeferred = dojo.xhr(this.method,{
 			url:this.href,
 			content: this.sendParams,
-			headers: {"Accept" : "application/javascript, application/json"},
+			headers: {"Accept": "application/javascript, application/json"},
 			load: dojo.hitch(this, this._requestCompleted),
 			error: dojo.hitch(this, this._requestError)
 		});
@@ -110,6 +110,10 @@ dojo.declare("czarTheory.dijits.SimpleAjaxButton",[dijit.form.Button], {
 		this._actionButton.set("iconClass","");
 		dojo.hitch(this,this.onSuccess,data)();
 		if(null !== this.confirm) this.confirmDialog.hide();
+	},
+
+	onRequest: function() {
+		this._makeRequest();
 	},
 
 	onSuccess: function(data, button){
