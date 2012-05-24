@@ -116,7 +116,7 @@ dojo.declare("czarTheory.dijits.SimpleAjaxButton",[dijit.form.Button], {
 		this._makeRequest();
 	},
 
-	onSuccess: function(data, button){
+	onSuccess: function(data){
 		console.log("No onSuccess method implemented for this button!");
 	},
 
