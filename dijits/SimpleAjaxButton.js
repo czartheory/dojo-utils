@@ -39,7 +39,7 @@ dojo.declare("czarTheory.dijits.SimpleAjaxButton",[dijit.form.Button], {
 			this._actionButton = new dijit.form.Button({
 				label:"Yes",
 				baseClass: this.baseClass,
-				onClick: dojo.hitch(this, this.onRequest)
+				onClick: dojo.hitch(this, this._preRequest)
 			}).placeAt(this.confirmDialog.containerNode);
 			dojo.create('span', {innerHTML:'&nbsp;&nbsp;'}, this.confirmDialog.containerNode);
 			this._cancelButton = new dijit.form.Button({
@@ -61,10 +61,10 @@ dojo.declare("czarTheory.dijits.SimpleAjaxButton",[dijit.form.Button], {
 
 	_onClick: function(evt){
 		if(null !== this.confirm) this.confirmDialog.show();
-		else this.onRequest();
+		else this._preRequest();
 	},
 
-	_makeRequest: function(){
+	_preRequest: function() {
 		if(this._actionButton.get("disabled")) return;
 		this._actionButton.set("disabled",true);
 		this._actionButton.set("iconClass","dijitIconWaiting");
@@ -74,11 +74,16 @@ dojo.declare("czarTheory.dijits.SimpleAjaxButton",[dijit.form.Button], {
 			this.errorTooltip.removeTarget(this._actionButton.domNode);
 		}
 
-		if(null === this.href) {
+		this.onRequest();
+	},
+
+	_makeRequest: function() {
+		if (null === this.href) {
 			this.onError("No href Defined for this button!");
 			return;
 		}
-		this.lastDeferred = dojo.xhr(this.method,{
+
+		this.lastDeferred = dojo.xhr(this.method, {
 			url:this.href,
 			content: this.sendParams,
 			headers: {"Accept": "application/javascript, application/json"},
