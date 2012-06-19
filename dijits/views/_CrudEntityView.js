@@ -4,8 +4,7 @@
  */
 dojo.provide("czarTheory.dijits.views._CrudEntityView");
 
-dojo.require("dijit._Widget");
-dojo.require("dijit._Templated");
+dojo.require("czarTheory.dijits.views._EntityView");
 
 dojo.declare("czarTheory.dijits.views._CrudEntityView", czarTheory.dijits.views._EntityView, {
 
