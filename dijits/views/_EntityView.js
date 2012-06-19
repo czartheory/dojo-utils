@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2011 Czar Theory, LLC
  * All rights reserved.
  */
@@ -8,12 +8,8 @@ dojo.require("dijit._Widget");
 dojo.require("dijit._Templated");
 
 dojo.declare("czarTheory.dijits.views._EntityView",[dijit._Widget, dijit._Templated],{
-	
+
 	parent: null,
-	deleteLink: null,
-	canDelete: true,
-	updateLink: null,
-	canUpdate: true,
 	properties: null,
 	allowedProperties: null,
 	idProperty: 'id',
@@ -22,10 +18,10 @@ dojo.declare("czarTheory.dijits.views._EntityView",[dijit._Widget, dijit._Templa
 	flashBackgroundColor: "#ff8",
 	normalBackgroundColor: "#fff",
 	animationDuration: 1500,
-	
+
 	postCreate: function(){
 		this.inherited(arguments);
-		
+
 		// Prep the Dom element with incomming values
 		var prop;
 		if(this.allowedProperties == null){
@@ -62,11 +58,11 @@ dojo.declare("czarTheory.dijits.views._EntityView",[dijit._Widget, dijit._Templa
 				}
 			};
 		}
-		
+
 		if(this.updateAnimationProperties == null){
 			this.updateAnimationProperties = this.showAnimationProperties;
 		}
-		
+
 		this._showAnimation = dojo.animateProperty(this.showAnimationProperties);
 		if(this.showAnimationProperties === this.updateAnimationProperties) {
 			this._updateAnimation = this._showAnimation;
@@ -75,15 +71,15 @@ dojo.declare("czarTheory.dijits.views._EntityView",[dijit._Widget, dijit._Templa
 		}
 		if(this.animateOnCreate) this._showAnimation.play();
 	},
-	
+
 	_showAnimation: null,
-	
+
 	_updateAnimation: null,
-	
+
 	showAnimationProperties: null,
-	
+
 	updateAnimationProperties: null,
-	
+
 	_setValueAttr: function(data){
 		var changed = {};
 		var prop;
@@ -102,7 +98,7 @@ dojo.declare("czarTheory.dijits.views._EntityView",[dijit._Widget, dijit._Templa
 		this._updateDom(changed);
 		if(this.animateOnUpdate) this._updateAnimation.play();
 	},
-	
+
 	_getValueAttr: function(){
 		var output = {};
 		var prop;
@@ -113,29 +109,11 @@ dojo.declare("czarTheory.dijits.views._EntityView",[dijit._Widget, dijit._Templa
 		}
 		return output;
 	},
-	
+
 	_getRawPropertiesAttr: function(){
 		return dojo.clone(this.properties);
 	},
-	
-	_setCanUpdateAttr: function(canUpdate){
-		if(!this.updateAnchor) return;
-		if(canUpdate){
-			dojo.removeClass(this.updateAnchor, "dijitHidden");
-		} else {
-			dojo.addClass(this.updateAnchor,"dijitHidden");
-		}
-	},
-	
-	_setCanDeleteAttr: function(canDelete){
-		if(!this.deleteAnchor) return;
-		if(canDelete){
-			dojo.removeClass(this.deleteAnchor, "dijitHidden");
-		} else {
-			dojo.addClass(this.deleteAnchor,"dijitHidden");
-		}
-	},
-	
+
 	_updateDom: function(changes){
 		var prop;
 		for(prop in changes){
@@ -151,20 +129,19 @@ dojo.declare("czarTheory.dijits.views._EntityView",[dijit._Widget, dijit._Templa
 				if(prop in this.attributeMap){
 					this._attrToDom(prop, value);
 				}
-			}		
+			}
 		}
 	},
 
 	getId: function(){
 		return this.properties[this.idProperty];
 	},
-	
+
 	activate: function(){
 		dojo.addClass(this.domNode,"active");
 	},
-	
+
 	deactivate: function(){
 		dojo.removeClass(this.domNode,"active");
 	}
-	
 });
