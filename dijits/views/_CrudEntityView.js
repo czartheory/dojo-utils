@@ -29,5 +29,5 @@ dojo.declare("czarTheory.dijits.views._CrudEntityView", czarTheory.dijits.views.
 		} else {
 			dojo.addClass(this.deleteAnchor,"dijitHidden");
 		}
-	},
+	}
 });
