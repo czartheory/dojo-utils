@@ -20,6 +20,7 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 	_activeItem: null,
 
 	postCreate: function() {
+		console.log('postCreate');
 		if(this.objectStore == null){
 			dojo.require('czarTheory.store.JsonRest');
 			this.objectStore = new czarTheory.store.JsonRest({target: this.target});
@@ -29,6 +30,7 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 	},
 
 	startup:function(){
+		console.log('startup');
 		this.inherited(arguments);
 
 		var _this = this;
