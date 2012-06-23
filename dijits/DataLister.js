@@ -86,6 +86,7 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 
 	_removeRecord: function (data) {
 		this.dataItems[data.id].destroyRecursive();
+		delete this.dataItems[data.id];
 	},
 
 	_activateItem: function(widget){
