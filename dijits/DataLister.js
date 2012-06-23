@@ -36,21 +36,21 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 		this.inherited(arguments);
 
 		var _this = this;
-		dojo.when(this.objectStore.query(),function(results){
-			for(var i=0;i<results.length;i++){
+		dojo.when(this.objectStore.query(), function(results){
+			for (var i = 0 ; i < results.length; ++i){
 				_this._addRecord.call(_this, results[i]);
 			}
 		},function(error){
 			console.log('error retreiving results back from server: ',error);
 		});
 
-		dojo.connect(this.storeContentsNode, 'onclick', this, function(evt){
+		dojo.connect(this.storeContentsNode, 'onclick', this, function (evt) {
 			var target = evt.target;
 			var traversable = dojo.query(target);
 			var node = traversable.closest('li')[0];
-			if(node == null) {return;}
+			if (node == null) { return; }
 			var widget = dijit.byNode(node);
-			if(widget == null) {return;}
+			if (widget == null) { return; }
 			this._activateItem(widget);
 		});
 	},
@@ -60,9 +60,9 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 
 		dojo.forEach(this.dataItems, function(w){w.destroyRecursive();});
 		this.dataItems = {};
-		dojo.when(this.objectStore.query(),function(results){
+		dojo.when(this.objectStore.query(), function (results) {
 			_this.numItems = results.length;
-			for(var i=0;i<results.length;i++){
+			for (var i = 0; i < results.length; ++i){
 				_this._addRecord.call(_this, results[i]);
 			}
 
@@ -76,7 +76,7 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 	_addRecord: function (data) {
 		if (this.dataItems.hasOwnProperty(data.id)) {
 			console.warn('You\'re overwritting id #' + data.id);
-			this.dataItems[data.id].destroyRecursive();
+			this._removeRecord(data);
 		}
 
 		var item = this.itemConstructor({properties:data, animateOnCreate:false, idProperty:this.idProperty});
@@ -84,12 +84,17 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 		item.placeAt(this.storeContentsNode);
 	},
 
+	_removeRecord: function (data) {
+		this.dataItems[data.id].destroyRecursive();
+	},
+
 	_activateItem: function(widget){
-		if(null != this._activeItem){
-			if(widget === this._activeItem) return;
+		if (null != this._activeItem) {
+			if (widget === this._activeItem) return;
 			this._activeItem.deactivate();
 		}
+
 		this._activeItem = widget;
-		if(widget != null) {widget.activate();}
+		if (widget != null) widget.activate();
 	}
 });

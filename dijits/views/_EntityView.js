@@ -7,7 +7,7 @@ dojo.provide("czarTheory.dijits.views._EntityView");
 dojo.require("dijit._Widget");
 dojo.require("dijit._Templated");
 
-dojo.declare("czarTheory.dijits.views._EntityView",[dijit._Widget, dijit._Templated],{
+dojo.declare("czarTheory.dijits.views._EntityView", [dijit._Widget, dijit._Templated], {
 
 	parent: null,
 	properties: null,
@@ -54,7 +54,7 @@ dojo.declare("czarTheory.dijits.views._EntityView",[dijit._Widget, dijit._Templa
 					}
 				},
 				onEnd: function(node){
-					dojo.style(node,"backgroundColor",null);
+					dojo.style(node, "backgroundColor", null);
 				}
 			};
 		}
