@@ -12,15 +12,15 @@ dojo.require('czarTheory.store.JsonRest');
 dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 
 	target: '', // the url of the data store
-	draggable: false,
 	objectStore: null,
 	itemConstructor: null,
 	idProperty: 'id',
+	storeChildNodeType: 'li',
+
 	templateString: dojo.cache('czarTheory.dijits', 'DataLister.html'),
 	_activeItem: null,
 
 	postCreate: function() {
-		console.log('postCreate');
 		if(this.objectStore == null){
 			dojo.require('czarTheory.store.JsonRest');
 			this.objectStore = new czarTheory.store.JsonRest({target: this.target});
@@ -30,7 +30,6 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 	},
 
 	startup:function(){
-		console.log('startup');
 		this.inherited(arguments);
 
 		var _this = this;
@@ -47,11 +46,18 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 		dojo.connect(this.storeContentsNode, 'onclick', this, function(evt){
 			var target = evt.target;
 			var traversable = dojo.query(target);
-			var node = traversable.closest('li')[0];
-			if(node == null) {return;}
+			var node = traversable.closest(this.storeChildNodeType)[0];
+
+			if(node == null) {
+				return;
+			}
+
 			var widget = dijit.byNode(node);
-			if(widget == null) {return;}
-			this._activateItem(widget);
+			if(widget == null) {
+				return;
+			}
+
+			this.onItemClick(widget, traversible);
 		});
 	},
 
@@ -75,6 +81,10 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 			console.log('error retreiving results back from server: ',error);
 		});
 
+	},
+
+	_onItemClick: function(widget){
+		this._activateItem(widget);
 	},
 
 	_activateItem: function(widget){

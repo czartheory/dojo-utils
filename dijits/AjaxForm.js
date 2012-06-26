@@ -4,74 +4,21 @@
  */
 dojo.provide("czarTheory.dijits.AjaxForm");
 
-dojo.require('dijit._Widget');
-dojo.require('dijit._Templated');
+dojo.require("czartheory.dijits._FormWrapper");
 
-dojo.declare("czarTheory.dijits.AjaxForm",[dijit._Widget, dijit._Templated], {
+dojo.declare("czarTheory.dijits.AjaxForm", czartheory.dijits._FormWrapper, {
 
 	href: '__BLANK__'
 	,method: '__BLANK__'
 
 	,_lastDeferred: null
 	,_errorTooltip: null
-	,_form:null
-	,_actionButton: null
+	,errorLabel: 'An Error has Occured.<br/>We\'re still working out kinks.'
 
 	,templateString: dojo.cache('czarTheory.dijits','AjaxForm.html')
 
 	,startup: function(){
 		this.inherited(arguments);
-
-		//Looking for a dojo.form.Form within the dialog
-		var foundWidgets = dijit.findWidgets(this.containerNode);
-		var i;
-		for (i = 0; i<foundWidgets.length; i++) {
-			if(foundWidgets[i].declaredClass == "dijit.form.Form"){
-				this._form = foundWidgets[i];
-				break;
-			}
-		}
-		if(!this._form) throw new Error('No dijit.form.form widget found inside widget: '+ this.id);
-		var formNode = this._form.domNode;
-
-		//unhiding the form if hidden (to prevent FOUC)
-		dojo.removeClass(formNode, 'dijitHidden');
-
-		//Locating the submit button
-		var formElements = this._form.getChildren();
-		for (i = formElements.length-1; i>=0; i--){
-			if(formElements[i].type == "submit") {
-				this._actionButton = formElements[i];
-				break;
-			}
-		}
-
-		//because it's required
-		if(this._actionButton == null) {
-			console.log("No submit button found in form: " + this.widgetId);
-		} else {
-			if(this._form.get("state") != "") this._actionButton.set("disabled",true);
-		}
-
-		//Allow submit button to be disabled if it's state is bad
-		this._form.watch("state",dojo.hitch(this, function(watch,oldState,newState){
-			var disabled = (newState == "") ? false : true;
-			this._actionButton.set("disabled",disabled);
-			if(!disabled) this._actionButton.set("iconClass","");
-		}));
-
-		//Connecting the submit button
-		dojo.connect(this._form,'onSubmit', this, function(evt){
-			if(this._actionButton.get("disabled")){
-				dojo.stopEvent(evt);
-			}
-			else {
-				this._actionButton.set("disabled",true);
-				this._actionButton.set("iconClass","dijitIconWaiting");
-				this._makeRequest(evt);
-			}
-		});
-
 
 		//Deciding on the form's destination url
 		if(this.href === '__BLANK__') this.href = this._form.action;
@@ -125,16 +72,14 @@ dojo.declare("czarTheory.dijits.AjaxForm",[dijit._Widget, dijit._Templated], {
 
 	,_requestError:function(error,ioArgs){
 		console.log("request error: ",error,ioArgs);
-
 		var data;
 		try{
 			data = JSON.parse(ioArgs.xhr.responseText);
 		} catch(e) {
-			console.log("parse error happened!");
 			data = ioArgs.xhr.responseText;
 		}
 
-		if(data.invalid != null) {
+		if(data && data.invalid != null){
 			this._onInvalid(data.invalid);
 		} else {
 			this.onError(data);
@@ -150,8 +95,11 @@ dojo.declare("czarTheory.dijits.AjaxForm",[dijit._Widget, dijit._Templated], {
 		} catch(e) {
 			error = "Invalid Json:" + data + ".";
 		}
-		if(error != null) this.onError(error);
-		else this._onSuccess(data);
+		if(error != null) {
+			this.onError(error);
+		} else {
+			this._onSuccess(data);
+		}
 	}
 
 	,_onSuccess: function(data){
@@ -164,8 +112,8 @@ dojo.declare("czarTheory.dijits.AjaxForm",[dijit._Widget, dijit._Templated], {
 		if(null === this._errorTooltip){
 			dojo.require("dijit.Tooltip");
 			this._errorTooltip = new dijit.Tooltip ({
-				label: 'An Error has Occured.<br/>We\'re still working out kinks.',
-				showDelay: 100
+				label: this.errorLabel
+				,showDelay: 100
 			});
 		}
 	}
