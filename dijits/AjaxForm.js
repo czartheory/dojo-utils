@@ -4,9 +4,9 @@
  */
 dojo.provide("czarTheory.dijits.AjaxForm");
 
-dojo.require("czartheory.dijits._FormWrapper");
+dojo.require("czarTheory.dijits._FormWrapper");
 
-dojo.declare("czarTheory.dijits.AjaxForm", czartheory.dijits._FormWrapper, {
+dojo.declare("czarTheory.dijits.AjaxForm", czarTheory.dijits._FormWrapper, {
 
 	href: '__BLANK__'
 	,method: '__BLANK__'

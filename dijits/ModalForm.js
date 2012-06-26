@@ -8,7 +8,7 @@ dojo.require("czarTheory.dijits._FormWrapper");
 dojo.require("dijit.form.Button");
 dojo.require("dijit.Dialog");
 
-dojo.declare("czarTheory.dijits.ModalForm", czartheory.dijits._FormWrapper, {
+dojo.declare("czarTheory.dijits.ModalForm", czarTheory.dijits._FormWrapper, {
 
 	widgetsInTemplate: true
 	,templateString: dojo.cache('czarTheory.dijits','ModalForm.html')
