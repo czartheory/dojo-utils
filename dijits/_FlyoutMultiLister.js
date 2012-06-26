@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2011 Czar Theory, LLC
  * All rights reserved.
  */
@@ -8,31 +8,32 @@ dojo.provide("czarTheory.dijits._FlyoutMultiLister");
 dojo.require("czarTheory.dijits.MultiLister");
 
 dojo.declare("czarTheory.dijits._FlyoutMultiLister",[czarTheory.dijits.MultiLister],{
-	
+
 	itemDetailWidget: null
-	
+
 	,_activateItem: function(widget){
-		this.inherited(arguments);
 		if(widget != null){
 			var values = widget.get("rawProperties");
 			this.itemDetailWidget.set("value",values);
 		} else {
 			this.itemDetailWidget.close();
 		}
+		
+		this.inherited(arguments);
 	}
-	
+
 	,_getCurrentData: function(){
 		return this.itemDetailWidget.get("value");
 	}
-	
+
 	,_currentItemUpdated: function(data){
 		this.inherited(arguments);
 		this.itemDetailWidget.set("value",data);
 	}
-	
+
 	,startup:function(){
 		this.inherited(arguments);
-		
+
 		dojo.connect(this.itemDetailWidget.updateAnchor, "onclick", this, function(evt){
 			dojo.stopEvent(evt);
 			this._currentItem = this._activeItem;
@@ -46,7 +47,7 @@ dojo.declare("czarTheory.dijits._FlyoutMultiLister",[czarTheory.dijits.MultiList
 			else this._deleteCurrent();
 		});
 	}
-	
+
 	,_newCreated: function(){
 		this.inherited(arguments);
 		this.storeContentsNode.scrollTop = this.storeContentsNode.scrollHeight;
@@ -57,5 +58,5 @@ dojo.declare("czarTheory.dijits._FlyoutMultiLister",[czarTheory.dijits.MultiList
 		while(previous && previous.nodeType != 1){previous = previous.previousSibling;}
 		return previous;
 	}
-	
+
 });

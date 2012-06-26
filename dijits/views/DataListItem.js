@@ -14,17 +14,20 @@ dojo.declare('czarTheory.dijits.views.DataListItem', czarTheory.dijits.views._En
 	,templateString: dojo.cache('czarTheory.dijits.views', 'DataListItem.html')
 
 	,attributeMap: {
-		id: '',
 		firstName: {node: 'firstNameNode', type: 'innerText'},
 		middleNames: {node: 'middleNamesNode', type: 'innerText'},
 		lastName: {node: 'lastNameNode', type: 'innerText'}
+	}
+
+	,constructor: function(params) {
+		this.dataId = params.properties.id;
 	}
 
     ,_setDemographicsAttr: function (data) {
 		console.log('it happened');
         var contents = '';
         for (var i in data) {
-            contents += '<dt>' + data[i].label + '</dt><dd>' + data[i].value + '</dd>';
+            contents += '<dt>' + data[i].label + '</dt><dd>' + data[i].value + '</dd><br/>';
         }
 
         this.demographicsNode.innerHTML = contents;

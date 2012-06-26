@@ -14,6 +14,7 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 	target: '', // the url of the data store
 	objectStore: null,
 	itemConstructor: null,
+	dataItems: null,
 	idProperty: 'id',
 	storeChildNodeType: 'li',
 
@@ -26,6 +27,7 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 			this.objectStore = new czarTheory.store.JsonRest({target: this.target});
 		}
 
+		this.dataItems = {};
 		this.inherited(arguments);
 	},
 
@@ -33,17 +35,15 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 		this.inherited(arguments);
 
 		var _this = this;
-		dojo.when(this.objectStore.query(),function(results){
-			for(var i=0;i<results.length;i++){
-				var data = results[i];
-				var item = _this.itemConstructor({properties:data, animateOnCreate:false, idProperty:_this.idProperty});
-				item.placeAt(_this.storeContentsNode);
+		dojo.when(this.objectStore.query(), function(results){
+			for (var i = 0 ; i < results.length; ++i){
+				_this._addRecord.call(_this, results[i]);
 			}
 		},function(error){
 			console.log('error retreiving results back from server: ',error);
 		});
 
-		dojo.connect(this.storeContentsNode, 'onclick', this, function(evt){
+		dojo.connect(this.storeContentsNode, 'onclick', this, function (evt) {
 			var target = evt.target;
 			var traversable = dojo.query(target);
 			var node = traversable.closest(this.storeChildNodeType)[0];
@@ -64,16 +64,12 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 	reload: function(callback){
 		var _this = this;
 
-		var oldies = dijit.findWidgets(_this.storeContentsNode);
-		console.log('oldies:',oldies);
-		dojo.forEach(oldies, function(w){w.destroyRecursive();});
-
-		dojo.when(this.objectStore.query(),function(results){
+		dojo.forEach(this.dataItems, function(w){w.destroyRecursive();});
+		this.dataItems = {};
+		dojo.when(this.objectStore.query(), function (results) {
 			_this.numItems = results.length;
-			for(var i=0;i<results.length;i++){
-				var data = results[i];
-				var item = _this.itemConstructor({properties:data, animateOnCreate:false, idProperty:_this.idProperty});
-				item.placeAt(_this.storeContentsNode);
+			for (var i = 0; i < results.length; ++i){
+				_this._addRecord.call(_this, results[i]);
 			}
 
 			callback(results.length);
@@ -87,12 +83,29 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 		this._activateItem(widget);
 	},
 
+	_addRecord: function (data) {
+		if (this.dataItems.hasOwnProperty(data.id)) {
+			console.warn('You\'re overwritting id #' + data.id);
+			this._removeRecord(data);
+		}
+
+		var item = this.itemConstructor({properties:data, animateOnCreate:false, idProperty:this.idProperty});
+		this.dataItems[data.id] = item;
+		item.placeAt(this.storeContentsNode);
+	},
+
+	_removeRecord: function (data) {
+		this.dataItems[data.id].destroyRecursive();
+		delete this.dataItems[data.id];
+	},
+
 	_activateItem: function(widget){
-		if(null != this._activeItem){
-			if(widget === this._activeItem) return;
+		if (null != this._activeItem) {
+			if (widget === this._activeItem) return;
 			this._activeItem.deactivate();
 		}
+
 		this._activeItem = widget;
-		if(widget != null) {widget.activate();}
+		if (widget != null) widget.activate();
 	}
 });
