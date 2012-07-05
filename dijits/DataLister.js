@@ -57,7 +57,7 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 				return;
 			}
 
-			this.onItemClick(widget, traversible);
+			this._onItemClick(widget, traversable);
 		});
 	},
 
