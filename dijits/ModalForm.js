@@ -25,24 +25,21 @@ dojo.declare("czarTheory.dijits.ModalForm", czarTheory.dijits._FormWrapper, {
 		//Create either a button or a link to activate the dialog
 		var buttonEvt;
 		if(this.useLink === true) {
-			this.buttonNode = dojo.create('a', {
-				innerHTML: this.buttonLabel
-				,href: '#'
-			}, this.domNode, 'before');
-			buttonEvt = 'onclick';
+			buttonEvt = 'onclick'; //notice the slight difference in capitalization
 		} else {
-			this.buttonNode = new dijit.form.Button({
-				label: this.buttonLabel
-			}).placeAt(this.domNode, 'before');
-			buttonEvt = 'onClick';
+			buttonEvt = 'onClick'; //notice the slight difference in Capitalization
 		}
-		if(this.baseClass != null) dojo.addClass(this.buttonNode,this.baseClass);
-
-		dojo.connect(this.dialogNode,'onHide',this, this._onCancel);
 
 		dojo.connect(this.buttonNode, buttonEvt, this, function(evt){
 			dojo.stopEvent(evt);
-			this.dialogNode.show();
+			this._onButtonNodeClick();
 		});
+
+		dojo.connect(this.dialogNode,'onHide',this, this._onCancel);
+
+	}
+
+	,_onButtonNodeClick: function(){
+		this.dialogNode.show();
 	}
 });

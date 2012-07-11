@@ -19,6 +19,14 @@ dojo.declare("czarTheory.dijits.views._EntityView", [dijit._Widget, dijit._Templ
 	normalBackgroundColor: "#fff",
 	animationDuration: 1500,
 
+	_showAnimation: null,
+
+	_updateAnimation: null,
+
+	showAnimationProperties: null,
+
+	updateAnimationProperties: null,
+
 	postCreate: function(){
 		this.inherited(arguments);
 
@@ -71,14 +79,6 @@ dojo.declare("czarTheory.dijits.views._EntityView", [dijit._Widget, dijit._Templ
 		}
 		if(this.animateOnCreate) this._showAnimation.play();
 	},
-
-	_showAnimation: null,
-
-	_updateAnimation: null,
-
-	showAnimationProperties: null,
-
-	updateAnimationProperties: null,
 
 	_setValueAttr: function(data){
 		var changed = {};

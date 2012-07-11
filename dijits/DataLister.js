@@ -11,7 +11,7 @@ dojo.require('czarTheory.store.JsonRest');
 
 dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 
-	target: '', // the url of the data store
+	href: '', // the url of the data store
 	objectStore: null,
 	itemConstructor: null,
 	dataItems: null,
@@ -24,7 +24,7 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 	postCreate: function() {
 		if(this.objectStore == null){
 			dojo.require('czarTheory.store.JsonRest');
-			this.objectStore = new czarTheory.store.JsonRest({target: this.target});
+			this.objectStore = new czarTheory.store.JsonRest({target: this.href});
 		}
 
 		this.dataItems = {};
@@ -57,7 +57,7 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 				return;
 			}
 
-			this.onItemClick(widget, traversible);
+			this._onItemClick(widget, traversable, evt);
 		});
 	},
 
@@ -69,7 +69,7 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 		dojo.when(this.objectStore.query(), function (results) {
 			_this.numItems = results.length;
 			for (var i = 0; i < results.length; ++i){
-				_this._addRecord.call(_this, results[i]);
+				_this._addRecord(results[i]);
 			}
 
 			callback(results.length);
@@ -83,15 +83,19 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 		this._activateItem(widget);
 	},
 
-	_addRecord: function (data) {
+	_addRecord: function (data, doAnimate) {
+		if(typeof doAnimate == 'undefined') doAnimate = false;
+		doAnimate = !!doAnimate;
+
 		if (this.dataItems.hasOwnProperty(data.id)) {
 			console.warn('You\'re overwritting id #' + data.id);
 			this._removeRecord(data);
 		}
 
-		var item = this.itemConstructor({properties:data, animateOnCreate:false, idProperty:this.idProperty});
+		var item = this.itemConstructor({properties:data, animateOnCreate:doAnimate, idProperty:this.idProperty});
 		this.dataItems[data.id] = item;
 		item.placeAt(this.storeContentsNode);
+		return item;
 	},
 
 	_removeRecord: function (data) {

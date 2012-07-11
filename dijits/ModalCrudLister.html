@@ -1,12 +1,15 @@
-<div class="${baseClass}">
+<div>
+	<ul data-dojo-attach-point="storeContentsNode" class="${baseClass}">
+	</ul>
 	<button data-dojo-attach-point="buttonNode"
 			  data-dojo-type="dijit.form.Button"
 			  type="button">${buttonLabel}
 	</button>
+
 	<div data-dojo-attach-point="dialogNode"
 		  data-dojo-type="dijit.Dialog"
-		  data-dojo-props="title:'${dialogTitle}',draggable:${draggable}"
+		  data-dojo-props="draggable:${draggable}"
 		  class="dijitHidden">
-		<div data-dojo-attach-point="containerNode"></div>
+		<span data-dojo-attach-point="containerNode"></span>
 	</div>
 </div>

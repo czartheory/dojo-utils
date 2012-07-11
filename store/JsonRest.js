@@ -38,6 +38,39 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 		return object[this.idProperty];
 	},
 
+	parseResponse: function(response) {
+		try{
+			return JSON.parse(response);
+		} catch (e){
+			return {error: {malformedJson: response}};
+		}
+	},
+
+	handleResponse: function(response, def, httpMethod, resultKey, options) {
+		var data = this.parseResponse(response);
+		if(data.error) {
+			def.reject(data.error);
+		} else {
+			var publish = {method: httpMethod};
+			if(typeof resultKey == 'string'){
+				publish[resultKey] = data;
+			}
+
+			if(typeof options == 'object'){
+				for(var key in options){
+					publish[key] = options[key];
+				}
+			}
+			dojo.publish(this.target,[publish]);
+			def.resolve(data);
+		}
+	},
+
+	handleError: function(response, def) {
+		var data = this.parseResponse(response);
+		def.reject(data.error ? data.error : data);
+	},
+
 	get: function(id, options){
 		//	summary:
 		//		Retrieves an object by its identity. This will trigger a GET request to the server using
@@ -47,36 +80,17 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 		//	returns: Object
 		//		The object in the store that matches the given id.
 		var headers = options || {};
-		var _target = this.target;
 
 		headers.Accept = "application/javascript, application/json";
 
 		var def = new dojo.Deferred();
+		var _this = this;
 		dojo.xhrGet({
 			url:this.target + id,
 			handleAs: "text",
 			headers: headers,
-			load: function(data){
-				var parsed;
-				try{
-					parsed = JSON.parse(data);
-				} catch (e) {
-					def.reject("Data back from server was malformed JSON: " + data);
-					return;
-				}
-				dojo.publish(_target,[{method:'GET',item:parsed}]);
-				def.resolve(parsed);
-			},
-			error: function(err,ioArgs){
-				var responseText = ioArgs.xhr.responseText();
-				try{
-					parsed = JSON.parse(responseText);
-					err.response = parsed;
-				} catch (e){
-					err.response = {'malformedJson': responseText};
-				}
-				def.reject(err);
-			},
+			load: function(response){_this.handleResponse(response, def, 'GET', 'item');},
+			error: function(err,ioArgs){_this.handleError(ioArgs.xhr.responseText, def)},
 			failOk: true
 		});
 		return def;
@@ -93,16 +107,14 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 		//	returns: Number
 		options = options || {};
 		var id = ("id" in options) ? options.id : this.getIdentity(object);
-		var _target = this.target;
 
 		if(typeof id === "undefined") {
-			console.error("ID missing for PUT request");
-			console.log(object, options);
-			console.log(this.getIdentity(object));
+			console.error("ID missing for PUT request. object: ", object, " options: " , options);
 			return null;
 		}
 
 		var def = new dojo.Deferred();
+		var _this = this;
 		dojo.xhrPut({
 			url: this.target + id,
 			content: object,
@@ -111,27 +123,8 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 //				"Content-Type": "application/json",
 				Accept: "application/javascript, application/json"
 			},
-			load: function(data){
-				var parsed;
-				try{
-					parsed = JSON.parse(data);
-				} catch (e) {
-					def.reject("Data back from server was malformed JSON: " + data);
-					return;
-				}
-				dojo.publish(_target,[{method:'PUT',item:parsed}]);
-				def.resolve(parsed);
-			},
-			error: function(err,ioArgs){
-				var responseText = ioArgs.xhr.responseText();
-				try{
-					parsed = JSON.parse(responseText);
-					err.response = parsed;
-				} catch (e){
-					err.response = {'malformedJson': responseText};
-				}
-				def.reject(err);
-			},
+			load: function(response){_this.handleResponse(response, def, 'PUT', 'item');},
+			error: function(err,ioArgs){_this.handleError(ioArgs.xhr.responseText, def)},
 			failOk: true
 		});
 		return def;
@@ -146,9 +139,9 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 		//		Additional metadata for storing the data.  Includes an "id"
 		//		property if a specific id is to be used.
 		options = options || {};
-		var _target = this.target;
 
 		var def = new dojo.Deferred();
+		var _this = this;
 		dojo.xhrPost({
 			url: this.target,
 			content: object,
@@ -157,68 +150,30 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 //				"Content-Type": "application/json",
 				Accept: "application/javascript, application/json"
 			},
-			load: function(data){
-				var parsed;
-				try{
-					parsed = JSON.parse(data);
-				} catch (e) {
-					def.reject("Data back from server was malformed JSON: " + data);
-					return;
-				}
-				dojo.publish(_target,[{method:'POST',item:parsed}]);
-				def.resolve(parsed);
-			},
-			error: function(err,ioArgs){
-				var responseText = ioArgs.xhr.responseText();
-				try{
-					parsed = JSON.parse(responseText);
-					err.response = parsed;
-				} catch (e){
-					err.response = {'malformedJson': responseText};
-				}
-				def.reject(err);
-			},
+			load: function(response){_this.handleResponse(response, def, 'POST', 'item');},
+			error: function(err,ioArgs){_this.handleError(ioArgs.xhr.responseText, def)},
 			failOk: true
 		});
 		return def;
 	},
 
-	remove: function(id){
+	remove: function(identifier){
 		// summary:
 		//		Deletes an object by its identity. This will trigger a DELETE request to the server.
 		// id: Number
 		//		The identity to use to delete the object
-		var _target = this.target;
 
 		var def = new dojo.Deferred();
+		var _this = this;
 		dojo.xhrDelete({
-			url: this.target + id,
+			url: this.target + identifier,
 			handleAs: "text",
 			headers:{
 //				"Content-Type": "application/json",
 				Accept: "application/javascript, application/json"
 			},
-			load: function(data){
-				var parsed;
-				try{
-					parsed = JSON.parse(data);
-				} catch (e) {
-					def.reject("Data back from server was malformed JSON: " + data);
-					return;
-				}
-				dojo.publish(_target,[{method:'DELETE',id:id}]);
-				def.resolve(parsed);
-			},
-			error: function(err,ioArgs){
-				var responseText = ioArgs.xhr.responseText();
-				try{
-					parsed = JSON.parse(responseText);
-					err.response = parsed;
-				} catch (e){
-					err.response = {'malformedJson': responseText};
-				}
-				def.reject(err);
-			},
+			load: function(response){_this.handleResponse(response, def, 'DELETE', null, {id:identifier});},
+			error: function(err,ioArgs){_this.handleError(ioArgs.xhr.responseText, def)},
 			failOk: true
 		});
 		return def;
@@ -237,7 +192,7 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 		var headers = {
 			Accept: "application/javascript, application/json"
 		};
-		var _target = this.target;
+
 		options = options || {};
 
 		if(options.start >= 0 || options.count >= 0){
@@ -256,32 +211,17 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 				query += (i > 0 ? "," : "") + (sort.descending ? '-' : '+') + encodeURIComponent(sort.attribute);
 			}
 		}
+
 		var def = new dojo.Deferred();
+		var _this = this;
 		var results = dojo.xhrGet({
 			url: this.target + (query || ""),
 			handleAs: "text",
 			headers: headers,
-			load: function(data,ioArgs){
-				var parsed = null;
-				try{
-					parsed = JSON.parse(data);
-				} catch(e){
-					def.reject("Data back from server was malformed JSON: " + data);
-					return;
-				}
-				dojo.publish(_target,[{method:'QUERY',items:parsed,query:ioArgs.query}]);
-				def.resolve(parsed);
+			load: function(response,ioArgs){
+				_this.handleResponse(response, def, 'QUERY', 'items',{query:ioArgs.query});
 			},
-			error: function(err,ioArgs){
-				var responseText = ioArgs.xhr.responseText();
-				try{
-					parsed = JSON.parse(responseText);
-					err.response = parsed;
-				} catch (e){
-					err.response = {'malformedJson': responseText};
-				}
-				def.reject(err);
-			},
+			error: function(err,ioArgs){_this.handleError(ioArgs.xhr.responseText, def)},
 			failOk: true
 		});
 

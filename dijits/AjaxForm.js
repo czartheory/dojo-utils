@@ -21,8 +21,18 @@ dojo.declare("czarTheory.dijits.AjaxForm", czarTheory.dijits._FormWrapper, {
 		this.inherited(arguments);
 
 		//Deciding on the form's destination url
-		if(this.href === '__BLANK__') this.href = this._form.action;
-		if(this.method === '__BLANK__') this.method = this._form.method;
+		if(this.href === '__BLANK__') {
+			var href = dojo.trim(this._form.action);
+			if(href){
+				this.href = href;
+			} else {
+				this.href = window.location.href;
+			}
+		}
+
+		if(this.method === '__BLANK__') {
+			this.method = this._form.method;
+		}
 	}
 
 	,_onCancel: function(){
@@ -38,17 +48,14 @@ dojo.declare("czarTheory.dijits.AjaxForm", czarTheory.dijits._FormWrapper, {
 		console.log("making request");
 		dojo.stopEvent(evt);
 
-		this._actionButton.set("disabled",true);
-		this._actionButton.set("iconClass","dijitIconWaiting");
-
 		//if a submit happended previously and there was an error, do this:
 		if(null !== this._errorTooltip) {
 			this._errorTooltip.close();
 			this._errorTooltip.removeTarget(this._actionButton.domNode);
 		}
 
-		if(null == this.href) {
-			this.onError("No href Defined for this button!");
+		if(this.target) {
+			this.onError("No Target defined for this Widget");
 			return;
 		}
 
@@ -75,11 +82,12 @@ dojo.declare("czarTheory.dijits.AjaxForm", czarTheory.dijits._FormWrapper, {
 		var data;
 		try{
 			data = JSON.parse(ioArgs.xhr.responseText);
+			data = data.error;
 		} catch(e) {
 			data = ioArgs.xhr.responseText;
 		}
 
-		if(data && data.invalid != null){
+		if(data && data.invalid){
 			this._onInvalid(data.invalid);
 		} else {
 			this.onError(data);
@@ -95,8 +103,13 @@ dojo.declare("czarTheory.dijits.AjaxForm", czarTheory.dijits._FormWrapper, {
 		} catch(e) {
 			error = "Invalid Json:" + data + ".";
 		}
+
 		if(error != null) {
-			this.onError(error);
+			if(error.invalid) {
+				this._onInvalid(error.invalid);
+			} else {
+				this.onError(error);
+			}
 		} else {
 			this._onSuccess(data);
 		}
@@ -118,17 +131,11 @@ dojo.declare("czarTheory.dijits.AjaxForm", czarTheory.dijits._FormWrapper, {
 		}
 	}
 
-	,onSuccess: function(data, button){
+	,onSuccess: function(data){
 		console.log("No onSuccess method implemented for this widget!");
 	}
 
 	,onError: function(error){
-		console.log("dealing with error",error);
-		if(error.invalid != null){
-			this._onInvalid(error.invalid);
-			return;
-		}
-
 		console.log("An Error Occured.");
 		console.log(error);
 		this._actionButton.set("disabled",false);

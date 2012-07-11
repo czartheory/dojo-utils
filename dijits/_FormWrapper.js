@@ -15,8 +15,8 @@ dojo.declare("czarTheory.dijits._FormWrapper",[dijit._Widget, dijit._Templated],
 	,startup: function(){
 		this.inherited(arguments);
 
-		//Looking for a dojo.form.Form within the dialog
-		var foundWidgets = dijit.findWidgets(this.dialogNode.containerNode);
+		//Looking for a dojo.form.Form within the widget
+		var foundWidgets = dijit.findWidgets(this.containerNode);
 		for (var i = 0; i<foundWidgets.length; i++) {
 			if(foundWidgets[i].declaredClass == "dijit.form.Form"){
 				this._form = foundWidgets[i];
@@ -64,7 +64,8 @@ dojo.declare("czarTheory.dijits._FormWrapper",[dijit._Widget, dijit._Templated],
 		});
 	}
 
-	,_makeRequest: function(evt){
-	}
+	,_makeRequest: function(){}
+
+	,_onCancel: function(){}
 
 });
