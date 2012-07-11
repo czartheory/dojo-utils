@@ -3,33 +3,13 @@
  * All rights reserved.
  */
 
-dojo.provide("czarTheory.dijits._FlyoutMultiLister");
+dojo.provide("czarTheory.dijits._FlyoutCrudLister");
 
-dojo.require("czarTheory.dijits.MultiLister");
+dojo.require("czarTheory.dijits._CrudLister");
 
-dojo.declare("czarTheory.dijits._FlyoutMultiLister",[czarTheory.dijits.MultiLister],{
+dojo.declare("czarTheory.dijits._FlyoutCrudLister",[czarTheory.dijits._CrudLister],{
 
 	itemDetailWidget: null
-
-	,_activateItem: function(widget){
-		if(widget != null){
-			var values = widget.get("rawProperties");
-			this.itemDetailWidget.set("value",values);
-		} else {
-			this.itemDetailWidget.close();
-		}
-		
-		this.inherited(arguments);
-	}
-
-	,_getCurrentData: function(){
-		return this.itemDetailWidget.get("value");
-	}
-
-	,_currentItemUpdated: function(data){
-		this.inherited(arguments);
-		this.itemDetailWidget.set("value",data);
-	}
 
 	,startup:function(){
 		this.inherited(arguments);
@@ -46,6 +26,21 @@ dojo.declare("czarTheory.dijits._FlyoutMultiLister",[czarTheory.dijits.MultiList
 			if(this._confirmDeleteDialog) {this._confirmDeleteDialog.show();}
 			else this._deleteCurrent();
 		});
+	}
+
+	,_activateItem: function(widget){
+		if(widget != null){
+			var values = widget.get("rawProperties");
+			this.itemDetailWidget.set("value",values);
+		} else {
+			this.itemDetailWidget.close();
+		}
+		this.inherited(arguments);
+	}
+
+	,_currentUpdated: function(data){
+		this.inherited(arguments);
+		this.itemDetailWidget.set("value",data);
 	}
 
 	,_newCreated: function(){

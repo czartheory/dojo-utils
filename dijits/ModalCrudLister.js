@@ -9,7 +9,8 @@ dojo.require('czarTheory.dijits.ModalAjaxForm');
 dojo.require('dijit.Dialog');
 
 dojo.declare("czarTheory.dijits.ModalCrudLister",[
-	czarTheory.dijits.ModalAjaxForm, czarTheory.dijits._CrudLister
+	czarTheory.dijits.ModalAjaxForm,
+	czarTheory.dijits._CrudLister
 ], {
 
 	dialogCreateLabel: "Create New"

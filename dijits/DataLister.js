@@ -79,8 +79,8 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 
 	},
 
-	_onItemClick: function(widget){
-		this._activateItem(widget);
+	_onItemClick: function(widget, traversable, evt){
+		this._activateItem(widget, traversable, evt);
 	},
 
 	_addRecord: function (data, doAnimate) {
