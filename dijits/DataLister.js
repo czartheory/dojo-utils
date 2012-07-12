@@ -103,13 +103,13 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 		delete this.dataItems[data.id];
 	},
 
-	_activateItem: function(widget){
+	_activateItem: function(widget, traversable){
 		if (null != this._activeItem) {
 			if (widget === this._activeItem) return;
 			this._activeItem.deactivate();
 		}
 
 		this._activeItem = widget;
-		if (widget != null) widget.activate();
+		if (widget != null) widget.activate(traversable);
 	}
 });
