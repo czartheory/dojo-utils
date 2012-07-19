@@ -24,7 +24,6 @@ dojo.declare('czarTheory.dijits.views.DataListItem', czarTheory.dijits.views._En
 	}
 
     ,_setDemographicsAttr: function (data) {
-		console.log('it happened');
         var contents = '';
         for (var i in data) {
             contents += '<dt>' + data[i].label + '</dt><dd>' + data[i].value + '</dd><br/>';

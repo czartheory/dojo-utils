@@ -40,7 +40,7 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 				_this._addRecord.call(_this, results[i]);
 			}
 		},function(error){
-			console.log('error retreiving results back from server: ',error);
+			console.error('error retreiving results back from server: ',error);
 		});
 
 		dojo.connect(this.storeContentsNode, 'onclick', this, function (evt) {
@@ -74,9 +74,8 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 
 			callback(results.length);
 		},function(error){
-			console.log('error retreiving results back from server: ',error);
+			console.error('error retreiving results back from server: ',error);
 		});
-
 	},
 
 	_onItemClick: function(widget, traversable, evt){
@@ -94,7 +93,7 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 
 		var item = this.itemConstructor({properties:data, animateOnCreate:doAnimate, idProperty:this.idProperty});
 		this.dataItems[data.id] = item;
-		item.placeAt(this.storeContentsNode);
+        item.placeAt(this.storeContentsNode);
 		return item;
 	},
 
