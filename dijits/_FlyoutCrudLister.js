@@ -28,6 +28,10 @@ dojo.declare("czarTheory.dijits._FlyoutCrudLister",[czarTheory.dijits._CrudListe
 		});
 	}
 
+	,_getCurrentData: function(){
+		return this.itemDetailWidget.get("value");
+	}
+
 	,_activateItem: function(widget){
 		if(widget != null){
 			var values = widget.get("rawProperties");

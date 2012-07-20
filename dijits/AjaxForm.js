@@ -45,7 +45,6 @@ dojo.declare("czarTheory.dijits.AjaxForm", czarTheory.dijits._FormWrapper, {
 	}
 
 	,_makeRequest: function(evt){
-		console.log("making request");
 		dojo.stopEvent(evt);
 
 		//if a submit happended previously and there was an error, do this:
@@ -132,12 +131,11 @@ dojo.declare("czarTheory.dijits.AjaxForm", czarTheory.dijits._FormWrapper, {
 	}
 
 	,onSuccess: function(data){
-		console.log("No onSuccess method implemented for this widget!");
+		console.warn("No onSuccess method implemented for this widget!");
 	}
 
 	,onError: function(error){
-		console.log("An Error Occured.");
-		console.log(error);
+		console.log("An Error Occured.", error);
 		this._actionButton.set("disabled",false);
 		this._actionButton.set("iconClass","dijitIconError");
 		this._initErrorTooltip();

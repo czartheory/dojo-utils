@@ -25,7 +25,7 @@ dojo.declare("czarTheory.dijits.ModalCrudLister",[
 		this.dialogNode.show();
 	}
 
-	,_newCreated: function(data){
+	,_newCreated: function(){
 		this.inherited(arguments);
 		this._dismissFormDialog();
 	}
@@ -36,7 +36,7 @@ dojo.declare("czarTheory.dijits.ModalCrudLister",[
 		this.dialogNode.show();
 	}
 
-	,_currentUpdated: function(data){
+	,_currentUpdated: function(){
 		this.inherited(arguments);
 		this._dismissFormDialog();
 	}

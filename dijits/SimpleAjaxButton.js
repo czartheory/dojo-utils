@@ -93,7 +93,6 @@ dojo.declare("czarTheory.dijits.SimpleAjaxButton",[dijit.form.Button], {
 	},
 
 	_requestError: function(error){
-		console.log("REQUEST ERRORED");
 		this.onError(error);
 	},
 
@@ -122,12 +121,11 @@ dojo.declare("czarTheory.dijits.SimpleAjaxButton",[dijit.form.Button], {
 	},
 
 	onSuccess: function(data){
-		console.log("No onSuccess method implemented for this button!");
+		console.warn("No onSuccess method implemented for this button!");
 	},
 
 	onError: function(error){
-		console.log("An Error Occured.");
-		console.log(error);
+		console.log("An Error Occured.", error);
 		var errorLabel = 'An Error has Occured.<br/>We\'re still working out kinks.';
 		if(null === this.errorTooltip){
 			dojo.require("dijit.Tooltip");

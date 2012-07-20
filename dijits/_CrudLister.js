@@ -64,7 +64,6 @@ dojo.declare("czarTheory.dijits._CrudLister",[
 
 	,_onItemClick: function(widget, traversable, evt) {
 		var link = traversable.closest('a')[0];
-		console.log("link: " , link);
 		if(null != link) {
 			var type = dojo.attr(link, 'data-dojo-attach-point');
 			if(type == 'deleteAnchor'){
@@ -125,7 +124,6 @@ dojo.declare("czarTheory.dijits._CrudLister",[
 	}
 
 	,_cancel: function(button){
-		console.log("things here");
 		if(null !== this._lastDeferred){
 			this._lastDeferred.cancel();
 		}
@@ -153,7 +151,6 @@ dojo.declare("czarTheory.dijits._CrudLister",[
 			var node = item.domNode;
 			var placeholder = dojo.query(node).siblings('[data-placeholder-for$='+ item.id + ']')[0];
 			if(placeholder != null) {
-				console.log("placeholder: ", placeholder);
 				dojo.addClass(placeholder, 'dijitHidden');
 				dojo.removeClass(node, 'dijitHidden');
 				item.set("disabled", false);
@@ -171,7 +168,6 @@ dojo.declare("czarTheory.dijits._CrudLister",[
 	}
 
 	,_newCreated: function(data){
-		console.log("new Created: ", data);
 		var item = this._addRecord(data, true);
 		this._activateItem(item);
 	}
@@ -180,7 +176,6 @@ dojo.declare("czarTheory.dijits._CrudLister",[
 		this._currentAction = "update";
 		var data = this._getCurrentData();
 		var raw = this._currentItem.get("rawProperties");
-		console.log("setting form with these values:",data);
 		this._form.reset();
 		this._form.set("value",data);
 		this._actionButton.set("label",this.buttonUpdateLabel);
@@ -217,6 +212,7 @@ dojo.declare("czarTheory.dijits._CrudLister",[
 	}
 
 	,_requestError:function(error){
+		console.log("An error occured:", error);
 		if(error.invalid){
 			this._onInvalid(error.invalid);
 		} else {

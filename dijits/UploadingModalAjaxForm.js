@@ -5,7 +5,9 @@
 dojo.provide("czarTheory.dijits.UploadingModalAjaxForm");
 
 dojo.require("czarTheory.dijits.ModalAjaxForm");
-dojo.require("dojo.io.iframe");
+
+dojo.require("dojox.form.Uploader");
+dojo.require("dojox.form.uploader.plugins.IFrame")
 
 dojo.declare("czarTheory.dijits.UploadingModalAjaxForm",[czarTheory.dijits.ModalAjaxForm], {
 
