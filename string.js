@@ -7,6 +7,7 @@
 dojo.provide('czarTheory.string');
 
 dojo.declare('czarTheory.string', null, {});
+
 czarTheory.string.strcmp = function (left, right) {
     if (typeof(left) != 'string' || typeof(right) != 'string') {
         console.error('strcmp requires strings for arguments:', left, right);
