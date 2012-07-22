@@ -95,7 +95,7 @@ dojo.declare("czarTheory.dijits.MultiLister",[
 		}
 
 		if(this._actionButton == null) {
-			console.log("No submit button found in form: " + this.widgetId);
+			console.error("No submit button found in form: " + this.widgetId);
 		} else {
 			this._actionButton.set("disabled",true);
 		}
@@ -140,7 +140,6 @@ dojo.declare("czarTheory.dijits.MultiLister",[
 	},
 
 	_onSubmit: function(evt){
-		console.log("making Request");
 		dojo.stopEvent(evt);
 
 		if(this._actionButton.get("disabled")) return;
@@ -191,7 +190,6 @@ dojo.declare("czarTheory.dijits.MultiLister",[
 	_prepFormForUpdate: function(){
 		this._currentAction = "update";
 		var data = this._getCurrentData();
-		console.log("setting form with these values:",data);
 		this._form.reset();
 		this._form.set("value",data);
 		this.dialogNode.set("title",this.dialogUpdateLabel);
@@ -262,7 +260,6 @@ dojo.declare("czarTheory.dijits.MultiLister",[
 		}
 
 		var _this = this;
-		console.log("requesting delete");
 		dojo.when(
 			this.objectStore.remove(_this._currentItem.getId()),
 			dojo.hitch(this,"_currentDeleted"),
@@ -308,7 +305,7 @@ dojo.declare("czarTheory.dijits.MultiLister",[
 	},
 
 	_deleteRequestError:function(error){
-		console.log("An error occured:", error);
+		console.error("An error occured:", error);
 		this._deleteButton.set("disabled", false);
 		this._deleteButton.set("iconClass", "dijitIconError");
 		this._initErrorTooltip();
@@ -325,7 +322,7 @@ dojo.declare("czarTheory.dijits.MultiLister",[
 			return;
 		}
 
-		console.log("An error occured:", error);
+		console.error("An error occured:", error);
 		this._actionButton.set("disabled", false);
 		this._actionButton.set("iconClass", "dijitIconError");
 		this._initErrorTooltip();
@@ -334,7 +331,7 @@ dojo.declare("czarTheory.dijits.MultiLister",[
 	},
 
 	_formInvalid: function(invalid){
-		console.log("Form is invalid:", invalid);
+		console.error("Form is invalid:", invalid);
 		this._actionButton.set("iconClass","dijitIconError");
 
 		var i;

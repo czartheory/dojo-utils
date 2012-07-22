@@ -212,7 +212,7 @@ dojo.declare("czarTheory.dijits._CrudLister",[
 	}
 
 	,_requestError:function(error){
-		console.log("An error occured:", error);
+		console.error("An error occured:", error);
 		if(error.invalid){
 			this._onInvalid(error.invalid);
 		} else {
@@ -250,7 +250,7 @@ dojo.declare("czarTheory.dijits._CrudLister",[
 	}
 
 	,_deleteRequestError:function(error){
-		console.log("An error occured:", error);
+		console.error("An error occured:", error);
 		this._deleteButton.set("disabled", false);
 		this._deleteButton.set("iconClass", "dijitIconError");
 		this._initErrorTooltip();

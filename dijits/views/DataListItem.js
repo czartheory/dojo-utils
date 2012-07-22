@@ -24,11 +24,13 @@ dojo.declare('czarTheory.dijits.views.DataListItem', czarTheory.dijits.views._En
 	}
 
     ,_setDemographicsAttr: function (data) {
-        var contents = '';
-        for (var i in data) {
-            contents += '<dt>' + data[i].label + '</dt><dd>' + data[i].value + '</dd><br/>';
-        }
+        if (this.hasOwnProperty('demographicsNode') && this.demographicsNode.hasOwnProperty('innerHTML')) {
+            var contents = '';
+            for (var i in data) {
+                contents += '<dt>' + data[i].label + '</dt><dd>' + data[i].value + '</dd><br/>';
+            }
 
-        this.demographicsNode.innerHTML = contents;
+            this.demographicsNode.innerHTML = contents;
+        }
     }
 });

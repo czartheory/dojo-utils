@@ -125,7 +125,7 @@ dojo.declare("czarTheory.dijits.SimpleAjaxButton",[dijit.form.Button], {
 	},
 
 	onError: function(error){
-		console.log("An Error Occured.", error);
+		console.error("An Error Occured.", error);
 		var errorLabel = 'An Error has Occured.<br/>We\'re still working out kinks.';
 		if(null === this.errorTooltip){
 			dojo.require("dijit.Tooltip");

@@ -42,14 +42,17 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
             options.sort = this.sort;
         }
 
-		dojo.when(this.objectStore.query({}, options), function(results){
-            console.debug('Got results:', results);
-			for (var i = 0 ; i < results.length; ++i){
-				_this._addRecord.call(_this, results[i]);
-			}
-		},function(error){
-			console.error('error retreiving results back from server: ',error);
-		});
+		dojo.when(
+            this.objectStore.query({}, options),
+            function (results) {
+                for (var i = 0 ; i < results.length; ++i){
+                    _this._addRecord.call(_this, results[i]);
+                }
+            },
+            function (error) {
+                console.error('[startup] error retreiving results back from server: ', error);
+            }
+        );
 
 		dojo.connect(this.storeContentsNode, 'onclick', this, function (evt) {
 			var target = evt.target;
@@ -87,7 +90,7 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 
 			callback(results.length);
 		}, function (error) {
-			console.error('error retreiving results back from server: ',error);
+			console.error('[reload] error retreiving results back from server: ',error);
 		});
 	},
 
@@ -96,7 +99,6 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 	},
 
 	_addRecord: function (data, doAnimate) {
-        console.debug('in _addRecord');
 		if(typeof doAnimate == 'undefined') doAnimate = this.animate;
 		doAnimate = !!doAnimate;
 
@@ -109,7 +111,6 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 		this.dataItems[data.id] = item;
         if (this.sort != null) {
             var result = this._getSortedInsertionPoint(item);
-            console.debug('got insertion point:', result);
             item.placeAt(result.node, result.placement);
         } else {
             item.placeAt(this.storeContentsNode);
@@ -125,10 +126,8 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 
     _getSortedInsertionPoint: function (item) {
         var nodes = dojo.query(this.storeChildNodeType, this.storeContentsNode);
-        console.debug('Searching for insertion point for', item, 'among', nodes);
         var maxNode = nodes.length;
         var maxSort = this.sort.length;
-        console.debug('max node', maxNode, 'max sort', maxSort);
         var test = 0;
         var node = null;
         for (var i = 0; i < maxNode; ++i) {
@@ -142,7 +141,6 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
                     test = czarTheory.string.stricmp(item.properties[sort.attribute], node[property].innerText);
                 }
 
-                console.debug('node', i, 'test', j, '=', test);
             }
 
             if (test < 0) {
