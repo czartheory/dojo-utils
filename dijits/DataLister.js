@@ -99,7 +99,6 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 	},
 
 	_addRecord: function (data, doAnimate) {
-        console.debug('in _addRecord');
 		if(typeof doAnimate == 'undefined') doAnimate = this.animate;
 		doAnimate = !!doAnimate;
 
@@ -112,7 +111,6 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 		this.dataItems[data.id] = item;
         if (this.sort != null) {
             var result = this._getSortedInsertionPoint(item);
-            console.debug('got insertion point:', result);
             item.placeAt(result.node, result.placement);
         } else {
             item.placeAt(this.storeContentsNode);
@@ -128,10 +126,8 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 
     _getSortedInsertionPoint: function (item) {
         var nodes = dojo.query(this.storeChildNodeType, this.storeContentsNode);
-        console.debug('Searching for insertion point for', item, 'among', nodes);
         var maxNode = nodes.length;
         var maxSort = this.sort.length;
-        console.debug('max node', maxNode, 'max sort', maxSort);
         var test = 0;
         var node = null;
         for (var i = 0; i < maxNode; ++i) {
@@ -145,8 +141,6 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
                     test = czarTheory.string.stricmp(item.properties[sort.attribute], node[property].innerText);
                 }
 
-                console.debug('node', i, 'test', j, '=', test);
-            }
 
             if (test < 0) {
                 return {'node': node.domNode, 'placement': 'before'};

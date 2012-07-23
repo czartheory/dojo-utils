@@ -77,7 +77,7 @@ dojo.declare("czarTheory.dijits.AjaxForm", czarTheory.dijits._FormWrapper, {
 	}
 
 	,_requestError:function(error,ioArgs){
-		console.log("request error: ",error,ioArgs);
+		console.error("request error: ",error,ioArgs);
 		var data;
 		try{
 			data = JSON.parse(ioArgs.xhr.responseText);
@@ -94,7 +94,6 @@ dojo.declare("czarTheory.dijits.AjaxForm", czarTheory.dijits._FormWrapper, {
 	}
 
 	,_requestCompleted: function(data){
-		console.log("request completed",data);
 		var error = null;
 		try{
 			data = JSON.parse(data);
@@ -135,7 +134,7 @@ dojo.declare("czarTheory.dijits.AjaxForm", czarTheory.dijits._FormWrapper, {
 	}
 
 	,onError: function(error){
-		console.log("An Error Occured.", error);
+		console.error("An Error Occured.", error);
 		this._actionButton.set("disabled",false);
 		this._actionButton.set("iconClass","dijitIconError");
 		this._initErrorTooltip();
@@ -144,7 +143,7 @@ dojo.declare("czarTheory.dijits.AjaxForm", czarTheory.dijits._FormWrapper, {
 	}
 
 	,_onInvalid: function(invalid){
-		console.log("Form is invalid:", invalid);
+		console.error("Form is invalid:", invalid);
 		this._actionButton.set("iconClass","dijitIconError");
 
 		var i;

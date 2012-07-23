@@ -22,8 +22,8 @@ dojo.declare("czarTheory.dijits.UploadingModalAjaxForm",[czarTheory.dijits.Modal
 			})
 			,error: dojo.hitch(this, this._requestError)
 			//,handle: function(error,ioArgs){
-				//console.log("handle",error);
-				//console.log("ioArgs:",ioArgs);
+				//console.error("handle",error);
+				//console.error("ioArgs:",ioArgs);
 				//this.onSuccess();
 			//}
 			,failOk: true
