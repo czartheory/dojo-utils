@@ -36,21 +36,6 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 	startup:function(){
 		this.inherited(arguments);
 
-		var _this = this;
-        var options = {};
-        if (null != this.sort) {
-            options.sort = this.sort;
-        }
-
-		dojo.when(this.objectStore.query({}, options), function(results){
-            console.debug('Got results:', results);
-			for (var i = 0 ; i < results.length; ++i){
-				_this._addRecord.call(_this, results[i]);
-			}
-		},function(error){
-			console.error('error retreiving results back from server: ',error);
-		});
-
 		dojo.connect(this.storeContentsNode, 'onclick', this, function (evt) {
 			var target = evt.target;
 			var traversable = dojo.query(target);
@@ -67,12 +52,20 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 
 			this._onItemClick(widget, traversable, evt);
 		});
+
+        this.reload();
 	},
 
 	reload: function (callback) {
 		var _this = this;
 
-		dojo.forEach(this.dataItems, function (w) {w.destroyRecursive();});
+		dojo.forEach(this.dataItems, function (w) {
+            w.destroyRecursive();
+        });
+
+        dojo.addClass(this.storeContentsNode, "loading");
+        dojo.removeClass(this.storeContentsNode, "error");
+
 		this.dataItems = {};
         var options = {};
         if (null != this.sort) {
@@ -80,16 +73,26 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
         }
 
 		dojo.when(this.objectStore.query({}, options), function (results) {
+            dojo.removeClass(_this.storeContentsNode, "loading");
 			_this.numItems = results.length;
+
 			for (var i = 0; i < results.length; ++i){
 				_this._addRecord(results[i]);
 			}
 
-			callback(results.length);
+            _this.onDataLoad(results.length);
+            if(callback){callback(results.length);}
+
 		}, function (error) {
 			console.error('error retreiving results back from server: ',error);
+            dojo.removeClass(_this.storeContentsNode,"loading");
+            dojo.addClass(_this.storeContentsNode, "error");
 		});
 	},
+
+    onDataLoad: function() {
+        //Hook for subclasses if needed
+    }
 
 	_onItemClick: function (widget, traversable, evt) {
 		this._activateItem(widget, traversable, evt);

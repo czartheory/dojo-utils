@@ -28,4 +28,10 @@ dojo.declare("czarTheory.dijits._InlineCrudLister",[czarTheory.dijits._CrudListe
         this._currentItem = this._activeItem;
         this._prepFormForUpdate();
 	}
+
+    ,_onDataLoad: function(count){
+        if(count > 0) {
+            this._activateItem(this.dataItems[0]);
+        }
+    }
 });
