@@ -92,7 +92,7 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
 
     onDataLoad: function() {
         //Hook for subclasses if needed
-    }
+    },
 
 	_onItemClick: function (widget, traversable, evt) {
 		this._activateItem(widget, traversable, evt);
@@ -140,7 +140,7 @@ dojo.declare('czarTheory.dijits.DataLister',[dijit._Widget, dijit._Templated],{
                 } else {
                     test = czarTheory.string.stricmp(item.properties[sort.attribute], node[property].innerText);
                 }
-
+            }
 
             if (test < 0) {
                 return {'node': node.domNode, 'placement': 'before'};

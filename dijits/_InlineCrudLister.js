@@ -9,7 +9,7 @@ dojo.require("czarTheory.dijits._CrudLister");
 
 dojo.declare("czarTheory.dijits._InlineCrudLister",[czarTheory.dijits._CrudLister],{
 
-	,startup:function(){
+	startup:function(){
 		this.inherited(arguments);
 
 		dojo.connect(this.deleteAnchor, "onclick", this, function(evt){
@@ -23,7 +23,7 @@ dojo.declare("czarTheory.dijits._InlineCrudLister",[czarTheory.dijits._CrudListe
 		});
 	}
 
-	,_activateItem: function(widget){
+	,_activateItem: function(){
 		this.inherited(arguments);
         this._currentItem = this._activeItem;
         this._prepFormForUpdate();
