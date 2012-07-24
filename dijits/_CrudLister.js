@@ -32,7 +32,7 @@ dojo.declare("czarTheory.dijits._CrudLister",[
 	,postCreate:function(){
 		this.inherited(arguments);
 
-		if(null != this.deleteConfirmation) {
+		if(this.canDelete && null != this.deleteConfirmation) {
 			this._confirmDeleteDialog = new dijit.Dialog({
 				title: 'Delete Confirmation',
 				content: this.deleteConfirmation + '<br/>',

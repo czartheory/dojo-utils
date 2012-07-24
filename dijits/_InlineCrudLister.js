@@ -12,15 +12,17 @@ dojo.declare("czarTheory.dijits._InlineCrudLister",[czarTheory.dijits._CrudListe
 	startup:function(){
 		this.inherited(arguments);
 
-		dojo.connect(this.deleteAnchor, "onclick", this, function(evt){
-			dojo.stopEvent(evt);
-			this._currentItem = this._activeItem;
-			if(this._confirmDeleteDialog) {
-                this._confirmDeleteDialog.show();
-            } else {
-                this._deleteCurrent();
-            }
-		});
+        if(null != this.deleteAnchor) {
+            dojo.connect(this.deleteAnchor, "onclick", this, function(evt){
+                dojo.stopEvent(evt);
+                this._currentItem = this._activeItem;
+                if(this._confirmDeleteDialog) {
+                    this._confirmDeleteDialog.show();
+                } else {
+                    this._deleteCurrent();
+                }
+            });
+        }
 	}
 
 	,_activateItem: function(){
@@ -29,9 +31,17 @@ dojo.declare("czarTheory.dijits._InlineCrudLister",[czarTheory.dijits._CrudListe
         this._prepFormForUpdate();
 	}
 
-    ,_onDataLoad: function(count){
+    ,onDataLoad: function(count){
         if(count > 0) {
-            this._activateItem(this.dataItems[0]);
+            var first;
+            for(var i in this.dataItems) {
+                if(this.dataItems.hasOwnProperty(i) && typeof(i) !== 'function') {
+                    first = this.dataItems[i];
+                    break;
+                }
+            }
+
+            this._activateItem(first);
         }
     }
 });
