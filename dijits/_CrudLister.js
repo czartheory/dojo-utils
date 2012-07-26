@@ -107,13 +107,21 @@ dojo.declare("czarTheory.dijits._CrudLister",[
 	}
 
 	,_submitForm: function(){
-		var data = this._form.get("value");
+		var data = this._getFormData();
 		if(this._currentAction == "create") {
 			this._createNew(data);
 		} else if(this._currentAction == "update") {
 			this._updateCurrent(data)
 		}
 	}
+
+    ,_getFormData: function(){
+        if(typeof this._form == "object"){
+            return this._form.get("value");
+        } else {
+            console.error("no form found in this widget");
+        }
+    }
 
 	,_onCancel: function(){
 		this._cancel(this._actionButton);
