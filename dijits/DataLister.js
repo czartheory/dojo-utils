@@ -108,8 +108,8 @@ dojo.declare('czarTheory.dijits.DataLister', [dijit._Widget, dijit._Templated], 
 
         doAnimate = !!doAnimate;
 
-        if (this.dataItems.hasOwnProperty(data.id)) {
-            console.warn('You\'re overwritting id #' + data.id);
+        if (this.dataItems.hasOwnProperty(data[this.idProperty])) {
+            console.warn('You\'re overwritting id #' + data[this.idPoroperty]);
             this._removeRecord(data);
         }
 
@@ -118,7 +118,7 @@ dojo.declare('czarTheory.dijits.DataLister', [dijit._Widget, dijit._Templated], 
             animateOnCreate: doAnimate,
             idProperty: this.idProperty
         });
-        this.dataItems[data.id] = item;
+        this.dataItems[data[this.idProperty]] = item;
         if (this.sort !== null) {
             result = this._getSortedInsertionPoint(item);
             item.placeAt(result.node, result.placement);
@@ -130,8 +130,8 @@ dojo.declare('czarTheory.dijits.DataLister', [dijit._Widget, dijit._Templated], 
     },
 
     _removeRecord: function (data) {
-        this.dataItems[data.id].destroyRecursive();
-        delete this.dataItems[data.id];
+        this.dataItems[data[this.idProperty]].destroyRecursive();
+        delete this.dataItems[data[this.idProperty]];
     },
 
     _getSortedInsertionPoint: function (item) {

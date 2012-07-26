@@ -27,8 +27,6 @@ dojo.declare("czarTheory.dijits._CrudLister",[
 	,_deleteButton: null
 	,_cancelDeleteButton: null
 
-	,_currentItem: null //The item being modded currently, not the item 'activated'
-
 	,postCreate:function(){
 		this.inherited(arguments);
 
@@ -42,7 +40,7 @@ dojo.declare("czarTheory.dijits._CrudLister",[
 
 			this._deleteButton = new dijit.form.Button({
 				label:"Yes",
-				onClick: dojo.hitch(this, this._deleteCurrent)
+				onClick: dojo.hitch(this, this._deleteActive)
 			}).placeAt(this._confirmDeleteDialog.containerNode);
 
 			dojo.create('span',{innerHTML:'&nbsp;&nbsp;'}, this._confirmDeleteDialog.containerNode);
@@ -68,15 +66,13 @@ dojo.declare("czarTheory.dijits._CrudLister",[
 			var type = dojo.attr(link, 'data-dojo-attach-point');
 			if(type == 'deleteAnchor'){
 				dojo.stopEvent(evt);
-				this._currentItem = widget;
 				if(this._confirmDeleteDialog) {
 					this._confirmDeleteDialog.show();
 				} else {
-					this._deleteCurrent();
+					this._deleteActive();
 				}
 			} else if(type == 'updateAnchor'){
 				dojo.stopEvent(evt);
-				this._currentItem = widget;
 				this._prepFormForUpdate();
 			} else {
 				this._activateItem(widget,traversable);
@@ -87,7 +83,7 @@ dojo.declare("czarTheory.dijits._CrudLister",[
 	}
 
 	,_getCurrentData: function(){
-		return this._currentItem.get("value");
+		return this._activeItem.get("value");
 	}
 
 	,_addRecord: function(data){
@@ -111,7 +107,7 @@ dojo.declare("czarTheory.dijits._CrudLister",[
 		if(this._currentAction == "create") {
 			this._createNew(data);
 		} else if(this._currentAction == "update") {
-			this._updateCurrent(data)
+			this._updateActive(data)
 		}
 	}
 
@@ -183,7 +179,7 @@ dojo.declare("czarTheory.dijits._CrudLister",[
 	,_prepFormForUpdate: function(){
 		this._currentAction = "update";
 		var data = this._getCurrentData();
-		var raw = this._currentItem.get("rawProperties");
+		var raw = this._activeItem.get("rawProperties");
 		this._form.reset();
 		this._form.set("value",data);
 		this._actionButton.set("label",this.buttonUpdateLabel);
@@ -204,19 +200,21 @@ dojo.declare("czarTheory.dijits._CrudLister",[
 		}
 	}
 
-	,_updateCurrent: function(data){
-		this._lastDeferred = this.objectStore.put(data, {id: this._currentItem.getId()});
+	,_updateActive: function(data){
+		this._lastDeferred = this.objectStore.put(data, {id: this._activeItem.getId()});
 		dojo.when(
 			this._lastDeferred,
-			dojo.hitch(this, this._currentUpdated),
+			dojo.hitch(this, this._recordUpdated),
 			dojo.hitch(this, this._requestError)
 		);
 	}
 
-	,_currentUpdated: function(data){
-		this._currentItem.set("value",data)
-		this._activateItem(this._currentItem);
-		this._currentItem = null;
+	,_recordUpdated: function(data){
+        widget = this.dataItems[data[this.idProperty]];
+        widget.set("value",data);
+        if(widget == this._activeItem) {
+            this._activateItem(widget);
+        }
 	}
 
 	,_requestError:function(error){
@@ -228,7 +226,7 @@ dojo.declare("czarTheory.dijits._CrudLister",[
 		}
 	}
 
-	,_deleteCurrent: function(){
+	,_deleteActive: function(){
 		if(this._deleteButton.get("disabled")) return;
 
 		this._deleteButton.set("disabled",true);
@@ -239,22 +237,26 @@ dojo.declare("czarTheory.dijits._CrudLister",[
 			this._errorTooltip.removeTarget(this._deleteButton.domNode);
 		}
 
-		this._lastDeferred = this.objectStore.remove(this._currentItem.getId());
+		this._lastDeferred = this.objectStore.remove(this._activeItem.getId());
 		dojo.when(
 			this._lastDeferred,
-			dojo.hitch(this, this._currentDeleted),
+			dojo.hitch(this, this._recordDeleted),
 			dojo.hitch(this, this._deleteRequestError)
 		);
 	}
 
-	,_currentDeleted: function(){
+	,_recordDeleted: function(data){
 		if(this._confirmDeleteDialog != null) {this._confirmDeleteDialog.hide();}
 		this._deleteButton.set("disabled",false);
 		this._deleteButton.set('iconClass',"");
-		var recent = this._currentItem;
-		this._currentItem = null;
-		this._activateItem(null);
-		recent.destroy();
+
+        widget = this.dataItems[data.id];
+        delete this.dataItems[data.id];
+
+        if(widget == this._activeItem) {
+            this._activateItem(null);
+        }
+		widget.destroy();
 	}
 
 	,_deleteRequestError:function(error){

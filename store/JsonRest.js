@@ -54,7 +54,9 @@ dojo.declare("czarTheory.store.JsonRest", null, {
 			var publish = {method: httpMethod};
 			if(typeof resultKey == 'string'){
 				publish[resultKey] = data;
-			}
+			} else if(httpMethod == "DELETE"){
+                data = options;
+            }
 
 			if(typeof options == 'object'){
 				for(var key in options){

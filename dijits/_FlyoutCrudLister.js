@@ -16,15 +16,13 @@ dojo.declare("czarTheory.dijits._FlyoutCrudLister",[czarTheory.dijits._CrudListe
 
 		dojo.connect(this.itemDetailWidget.updateAnchor, "onclick", this, function(evt){
 			dojo.stopEvent(evt);
-			this._currentItem = this._activeItem;
 			this._prepFormForUpdate();
 		});
 
 		dojo.connect(this.itemDetailWidget.deleteAnchor, "onclick", this, function(evt){
 			dojo.stopEvent(evt);
-			this._currentItem = this._activeItem;
 			if(this._confirmDeleteDialog) {this._confirmDeleteDialog.show();}
-			else this._deleteCurrent();
+			else this._deleteActive();
 		});
 	}
 
@@ -42,7 +40,7 @@ dojo.declare("czarTheory.dijits._FlyoutCrudLister",[czarTheory.dijits._CrudListe
 		this.inherited(arguments);
 	}
 
-	,_currentUpdated: function(data){
+	,_recordUpdated: function(data){
 		this.inherited(arguments);
 		this.itemDetailWidget.set("value",data);
 	}
