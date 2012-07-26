@@ -9,7 +9,9 @@ dojo.require('dijit._Templated');
 
 dojo.declare("czarTheory.dijits._FormWrapper",[dijit._Widget, dijit._Templated], {
 
-	_form:null
+	method: '__BLANK__'
+	,href: '__BLANK__'
+	,_form:null
 	,_actionButton: null
 
 	,startup: function(){
@@ -62,6 +64,24 @@ dojo.declare("czarTheory.dijits._FormWrapper",[dijit._Widget, dijit._Templated],
 				this._makeRequest(evt);
 			}
 		});
+
+		//Deciding on the form's destination url
+		if(this.href === '__BLANK__') {
+			var href = dojo.trim(this._form.get("action"));
+			if(href){
+				this.href = href;
+			} else {
+				this.href = window.location.href;
+			}
+		} else {
+            this._form.set("action", this.href);
+        }
+
+		if(this.method === '__BLANK__') {
+			this.method = this._form.get("method");
+		} else {
+            this._form.set("method", this.method);
+        }
 	}
 
 	,_makeRequest: function(){}

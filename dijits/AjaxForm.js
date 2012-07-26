@@ -8,32 +8,12 @@ dojo.require("czarTheory.dijits._FormWrapper");
 
 dojo.declare("czarTheory.dijits.AjaxForm", czarTheory.dijits._FormWrapper, {
 
-	href: '__BLANK__'
-	,method: '__BLANK__'
+	templateString: dojo.cache('czarTheory.dijits','AjaxForm.html')
 
 	,_lastDeferred: null
 	,_errorTooltip: null
 	,errorLabel: 'An Error has Occured.<br/>We\'re still working out kinks.'
 
-	,templateString: dojo.cache('czarTheory.dijits','AjaxForm.html')
-
-	,startup: function(){
-		this.inherited(arguments);
-
-		//Deciding on the form's destination url
-		if(this.href === '__BLANK__') {
-			var href = dojo.trim(this._form.action);
-			if(href){
-				this.href = href;
-			} else {
-				this.href = window.location.href;
-			}
-		}
-
-		if(this.method === '__BLANK__') {
-			this.method = this._form.method;
-		}
-	}
 
 	,_onCancel: function(){
 		if(null !== this._lastDeferred){this._lastDeferred.cancel();}
