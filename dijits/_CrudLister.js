@@ -15,6 +15,7 @@ dojo.declare("czarTheory.dijits._CrudLister",[
 	,buttonCreateLabel: "Create"
 	,buttonUpdateLabel: "Save"
 	,deleteConfirmation: "Are you sure?"
+    ,deleteConfirmPosition: NaN
 
 	,canCreate: true
 	,canUpdate: true
@@ -67,7 +68,7 @@ dojo.declare("czarTheory.dijits._CrudLister",[
 			if(type == 'deleteAnchor'){
 				dojo.stopEvent(evt);
 				if(this._confirmDeleteDialog) {
-					this._confirmDeleteDialog.show();
+					this._showDeleteConfirmation();
 				} else {
 					this._deleteActive();
 				}
@@ -81,6 +82,15 @@ dojo.declare("czarTheory.dijits._CrudLister",[
 			this._activateItem(widget,traversable);
 		}
 	}
+
+    ,_showDeleteConfirmation: function(){
+        console.log("show delete confirmation");
+        this._confirmDeleteDialog.show();
+        if(!isNaN(this.deleteConfirmPosition)){
+            console.log("custom position");
+            dojo.style(this._confirmDeleteDialog.domNode,'top',this.deleteConfirmPosition + 'px');
+        }
+    }
 
 	,_getCurrentData: function(){
 		return this._activeItem.get("value");

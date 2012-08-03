@@ -21,7 +21,7 @@ dojo.declare("czarTheory.dijits._FlyoutCrudLister",[czarTheory.dijits._CrudListe
 
 		dojo.connect(this.itemDetailWidget.deleteAnchor, "onclick", this, function(evt){
 			dojo.stopEvent(evt);
-			if(this._confirmDeleteDialog) {this._confirmDeleteDialog.show();}
+			if(this._confirmDeleteDialog) {this._showDeleteConfirmation();}
 			else this._deleteActive();
 		});
 	}

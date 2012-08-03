@@ -18,6 +18,11 @@ dojo.declare("czarTheory.dijits.SimpleAjaxButton",[dijit.form.Button], {
 	confirmDialog: null,
 	lastDeferred: null,
 	errorTooltip: null,
+    position: NaN,
+
+    confirmYes: 'Yes',
+    confirmNo: 'Cancel',
+    confirmTitle: 'Are you sure?',
 
 	constructor: function(){
 		this.confirm = null;
@@ -31,19 +36,19 @@ dojo.declare("czarTheory.dijits.SimpleAjaxButton",[dijit.form.Button], {
 		if(null !== this.confirm){
 			dojo.require("dijit.Dialog");
 			this.confirmDialog = new dijit.Dialog({
-				title: "Are you sure?",
+				title: this.confirmTitle,
 				content: this.confirm + '<br/>',
 				onHide: dojo.hitch(this,this._onCancel),
 				draggable: false
 			});
 			this._actionButton = new dijit.form.Button({
-				label:"Yes",
+				label:this.confirmYes,
 				baseClass: this.baseClass,
 				onClick: dojo.hitch(this, this._preRequest)
 			}).placeAt(this.confirmDialog.containerNode);
 			dojo.create('span', {innerHTML:'&nbsp;&nbsp;'}, this.confirmDialog.containerNode);
 			this._cancelButton = new dijit.form.Button({
-				label:"Cancel",
+				label:this.confirmNo,
 				baseClass: "gray dijitButton",
 				onClick: dojo.hitch(this, function(){this.confirmDialog.hide();})
 			}).placeAt(this.confirmDialog.containerNode);
@@ -59,8 +64,13 @@ dojo.declare("czarTheory.dijits.SimpleAjaxButton",[dijit.form.Button], {
 		}
 	},
 
-	_onClick: function(evt){
-		if(null !== this.confirm) this.confirmDialog.show();
+	_onClick: function(){
+		if(null !== this.confirm){
+            this.confirmDialog.show();
+            if(!isNaN(this.position)){
+                dojo.style(this.confirmDialog.domNode,'top',this.position + 'px');
+            }
+        }
 		else this._preRequest();
 	},
 

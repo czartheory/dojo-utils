@@ -22,7 +22,7 @@ dojo.declare("czarTheory.dijits.ModalCrudLister",[
 	,_prepFormForCreation: function(){
 		this.inherited(arguments);
 		this.dialogNode.set("title",this.dialogCreateLabel);
-		this.dialogNode.show();
+		this.showDialog();
 	}
 
 	,_newCreated: function(){
@@ -33,7 +33,7 @@ dojo.declare("czarTheory.dijits.ModalCrudLister",[
 	,_prepFormForUpdate: function(){
 		this.inherited(arguments);
 		this.dialogNode.set("title",this.dialogUpdateLabel);
-		this.dialogNode.show();
+		this.showDialog();
 	}
 
 	,_recordUpdated: function(){

@@ -16,7 +16,7 @@ dojo.declare("czarTheory.dijits._InlineCrudLister",[czarTheory.dijits._CrudListe
             dojo.connect(this.deleteAnchor, "onclick", this, function(evt){
                 dojo.stopEvent(evt);
                 if(this._confirmDeleteDialog) {
-                    this._confirmDeleteDialog.show();
+                    this._showDeleteConfirmation();
                 } else {
                     this._deleteActive();
                 }

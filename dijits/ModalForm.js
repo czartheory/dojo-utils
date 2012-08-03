@@ -18,6 +18,7 @@ dojo.declare("czarTheory.dijits.ModalForm", czarTheory.dijits._FormWrapper, {
 	,draggable: false
 	,useLink: false
 	,buttonNode: null
+    ,position: NaN
 
 	,startup: function(){
 		this.inherited(arguments);
@@ -40,6 +41,13 @@ dojo.declare("czarTheory.dijits.ModalForm", czarTheory.dijits._FormWrapper, {
 	}
 
 	,_onButtonNodeClick: function(){
-		this.dialogNode.show();
+        this.showDialog();
 	}
+
+    ,showDialog: function(){
+		this.dialogNode.show();
+        if(!isNaN(this.position)){
+            dojo.style(this.dialogNode.domNode,'top',this.position + 'px');
+        }
+    }
 });
