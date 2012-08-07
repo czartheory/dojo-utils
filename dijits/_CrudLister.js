@@ -84,10 +84,8 @@ dojo.declare("czarTheory.dijits._CrudLister",[
 	}
 
     ,_showDeleteConfirmation: function(){
-        console.log("show delete confirmation");
         this._confirmDeleteDialog.show();
         if(!isNaN(this.deleteConfirmPosition)){
-            console.log("custom position");
             dojo.style(this._confirmDeleteDialog.domNode,'top',this.deleteConfirmPosition + 'px');
         }
     }
@@ -97,18 +95,7 @@ dojo.declare("czarTheory.dijits._CrudLister",[
 	}
 
 	,_addRecord: function(data){
-		if(this.canDelete) {
-			if(!data.hasOwnProperty('canDelete')) data.canDelete = this.canDelete;
-		} else {
-			data.canDelete = false;
-		}
-
-		if(this.canUpdate) {
-			if(!data.hasOwnProperty('canUpdate')) data.canUpdate = this.canUpdate;
-		} else {
-			data.canUpdate = false;
-		}
-
+        this._setPermissions(data);
 		return this.inherited(arguments);
 	}
 
@@ -126,6 +113,7 @@ dojo.declare("czarTheory.dijits._CrudLister",[
             return this._form.get("value");
         } else {
             console.error("no form found in this widget");
+            return null;
         }
     }
 
@@ -181,6 +169,24 @@ dojo.declare("czarTheory.dijits._CrudLister",[
 		);
 	}
 
+    ,_setPermissions: function(data){
+        if(!data.hasOwnProperty('canUpdate')){
+            data.canUpdate = true;
+        }
+
+        if(!data.hasOwnProperty('canDelete')){
+            data.canDelete = true;
+        }
+
+        if(!this.canUpdate) {
+            data.canUpdate = false;
+        }
+
+        if(!this.canDelete) {
+            data.canDelete = false;
+        }
+    }
+
 	,_newCreated: function(data){
 		var item = this._addRecord(data, true);
 		this._activateItem(item);
@@ -220,6 +226,7 @@ dojo.declare("czarTheory.dijits._CrudLister",[
 	}
 
 	,_recordUpdated: function(data){
+        this._setPermissions(data);
         widget = this.dataItems[data[this.idProperty]];
         widget.set("value",data);
         if(widget == this._activeItem) {

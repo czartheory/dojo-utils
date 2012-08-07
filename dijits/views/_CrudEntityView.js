@@ -8,9 +8,10 @@ dojo.require("czarTheory.dijits.views._EntityView");
 
 dojo.declare("czarTheory.dijits.views._CrudEntityView", czarTheory.dijits.views._EntityView, {
 
-	deleteLink: null,
+	deleteAnchor: null,
 	canDelete: true,
-	updateLink: null,
+
+	updateAnchor: null,
 	canUpdate: true,
 
 	_setCanUpdateAttr: function(canUpdate){
