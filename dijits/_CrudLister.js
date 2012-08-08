@@ -66,7 +66,7 @@ dojo.declare("czarTheory.dijits._CrudLister", [czarTheory.dijits.DataLister], {
             type;
 
         this._activateItem(widget, traversable);
-        if (null !== link) {
+        if (undefined !== link) {
             type = dojo.attr(link, 'data-dojo-attach-point');
             if (type === 'deleteAnchor') {
                 dojo.stopEvent(evt);
