@@ -154,7 +154,7 @@ dojo.declare("czarTheory.dijits._CrudLister", [czarTheory.dijits.DataLister], {
             item = items[i];
             node = item.domNode;
             placeholder = dojo.query(node).siblings('[data-placeholder-for$=' + item.id + ']')[0];
-            if (placeholder !== null) {
+            if (placeholder !== undefined) {
                 dojo.addClass(placeholder, 'dijitHidden');
                 dojo.removeClass(node, 'dijitHidden');
                 item.set("disabled", false);
@@ -213,7 +213,7 @@ dojo.declare("czarTheory.dijits._CrudLister", [czarTheory.dijits.DataLister], {
             item = items[i];
             node = item.domNode;
             placeholder = dojo.query(node).siblings('[data-placeholder-for$=' + item.id + ']')[0];
-            if (placeholder !== null) {
+            if (placeholder !== undefined) {
                 dojo.removeClass(placeholder, 'dijitHidden');
                 value = raw[item.id];
                 if (typeof value === 'object') {
