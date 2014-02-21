@@ -19,6 +19,9 @@ dojo.declare('czarTheory.dijits.DataLister', [dijit._Widget, dijit._Templated], 
     storeChildNodeType: 'li',
     sort: null,
     animate: false,
+    loadOnStart: true,
+    loadBatchSize: 100,
+    isLoading: false,
 
     templateString: dojo.cache('czarTheory.dijits', 'DataLister.html'),
     _activeItem: null,
@@ -54,10 +57,11 @@ dojo.declare('czarTheory.dijits.DataLister', [dijit._Widget, dijit._Templated], 
             this._onItemClick(widget, traversable, evt);
         });
 
-        this.reload();
+        if(this.loadOnStart) this.reload();
     },
 
     reload: function (callback) {
+        if(this.isLoading) return;
         var _this = this,
             options = {};
 
@@ -75,21 +79,41 @@ dojo.declare('czarTheory.dijits.DataLister', [dijit._Widget, dijit._Templated], 
 
         dojo.when(this.objectStore.query({}, options), function (results) {
             var i, max;
-            dojo.removeClass(_this.storeContentsNode, "loading");
             _this.numItems = results.length;
-            for (i = 0, max = results.length; i < max; ++i) {
-                _this._addRecord(results[i]);
-            }
-
-            _this.onDataLoad(results.length);
-            if (callback) {
-                callback(results.length);
-            }
+            _this.isLoading = true;
+            _this._loadRecords(results);
         }, function (error) {
             console.error('error retreiving results back from server: ', error);
             dojo.removeClass(_this.storeContentsNode, "loading");
             dojo.addClass(_this.storeContentsNode, "error");
         });
+    },
+
+    _loadRecords: function(data, i) {
+        if(i == undefined) {i = 0;}
+        var stop = i + this.loadBatchSize;
+        if(stop > this.numItems) stop = this.numItems;
+
+        for (var j = i; j < stop; j++) {
+            this._addRecord(data[j]);
+        }
+
+        if(j < this.numItems) {
+            var _this = this;
+            var nextBatch = function() {
+                _this._loadRecords(data, j);
+            };
+            setTimeout(nextBatch, 0);
+        } else {
+            this.isLoading = false;
+            this.onDataLoad(this.numItems);
+            dojo.removeClass(this.storeContentsNode, "loading");
+            var callback = this._loadingCallback;
+            this._loadingCallback = null;
+            if(typeof callback == "function") {
+                callback(this.numItems);
+            }
+        }
     },
 
     onDataLoad: function() {
@@ -120,8 +144,10 @@ dojo.declare('czarTheory.dijits.DataLister', [dijit._Widget, dijit._Templated], 
         });
         this.dataItems[data[this.idProperty]] = item;
         if (this.sort !== null) {
-            result = this._getSortedInsertionPoint(item);
-            item.placeAt(result.node, result.placement);
+            //result = this._getSortedInsertionPoint(item);
+            //item.placeAt(result.node, result.placement);
+            //@TODO Find out why the above code is acting wonky in firefox
+            item.placeAt(this.storeContentsNode);
         } else {
             item.placeAt(this.storeContentsNode);
         }
